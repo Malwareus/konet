@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Ana sayfa</title>
+</head>
+<body>
+<h1>Ana sayfa</h1>
+<div id="results"></div>
+<script>
+    fetch("https://jsonplaceholder.typicode.com/comments/1")
+    .then(function(data){
+        console.log(data)
+        return data.json()
+    })
+    .then(function(data){
+        var results = document.getElementById('results')
+        results.innerHTML = `${data.email}`
+        console.log(data)
+    })
+    .catch(function(error){
+        console.log(error)
+    })
+</script>
+</body>
+</html>
