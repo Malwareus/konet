@@ -5,9 +5,68 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Veri</title>
+    <title>Document</title>
+    <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
-<h1>Veri</h1>
+
+<script>
+
+    //GAMESATIŞ FETCH
+
+    fetch('https://api.allorigins.win/raw?url=https://www.gamesatis.com/knight-online-goldbar')
+        .then(response => response.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, "text/html");
+            const goldbarContainer = doc.querySelector('.goldbar-container');
+            const priceDivs = goldbarContainer.querySelectorAll('.goldbar-row-price');
+            let buyPrice;
+            let sellPrice;
+            let name;
+            let prices = [];
+            for (let i = 0; i < priceDivs.length; i += 2) {
+                buyPrice = priceDivs[i].textContent.match(/\d+(\.\d+)?/g).join('.');
+                sellPrice = priceDivs[i + 1].textContent.match(/\d+(\.\d+)?/g).join('.');
+                name = priceDivs[i].parentNode.querySelector('.goldbar-row-name').textContent.split(" ")[0].replace('\n','');
+                prices.push({buy:buyPrice, sell:sellPrice, name:name})
+            }
+            const socket = io.connect('http://localhost:3000');
+            socket.emit('gameSatisPrices',prices);
+        });
+
+
+
+</script>
+
+<script>
+    //KABASAKAL FETCH
+    fetch('https://api.allorigins.win/raw?url=https://www.klasgame.com/knightonline/knight-online-gb-goldbar-premium-cash')
+        .then(response => response.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, "text/html");
+            const klasGameGb = doc.querySelector('#urunler');
+            const klasGameBuyCek = klasGameGb.querySelectorAll('.product-price.margin-right-10.price')
+            const klasGameSellCek = klasGameGb.querySelectorAll('.product-button-area')
+            const klasGameNameCek = Array.from(klasGameGb.querySelectorAll('.product-title[data-type="object-name"]'));
+            let klasGameBuyPrice;
+            let klasGameSellPrice;
+            let klasGameName;
+            let klasGamePrices = [];
+            for (let i = 0; i < klasGameBuyCek.length; i += 1) {
+                klasGameBuyPrice = klasGameBuyCek[i].textContent.match(/\d+(\.\d+)?/g).join('.');
+                klasGameSellPrice = klasGameSellCek[i].textContent.match(/\d+(\.\d+)?/g).join('.');
+                klasGameName = klasGameNameCek[i].textContent.split(" ")[0].replace('\n','');;
+                klasGamePrices.push({klasGameBuy:klasGameBuyPrice, klasGameSell:klasGameSellPrice, klasGameName:klasGameName})
+            }
+            const socket = io.connect('http://localhost:3000');
+            socket.emit('klasGamePrices',klasGamePrices);
+            console.log(klasGamePrices)
+        });
+
+
+
+</script>
 </body>
 </html>
