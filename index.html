@@ -94,7 +94,10 @@
         <td colspan="3" rowspan="1"><img src="https://www.klasgame.com/theme/klasgame2020/image/logo.png" width="110px"></td>
     </tr>
     <tr id="data-display3" style="height: 60px; vertical-align: middle;">
-        <td colspan="3" rowspan="3"><img src="https://oyuneks.com/public/front/site/oyuneks-1-1630332428.png" width="110px"></td>
+        <td colspan="3" rowspan="1"><img src="https://oyuneks.com/public/front/site/oyuneks-1-1630332428.png" width="110px"></td>
+    </tr>
+    <tr id="data-display4" style="height: 60px; vertical-align: middle;">
+        <td colspan="3" rowspan="1"><img src="https://www.vatangame.com/public/vatangame-ikinci-yil.png" width="110px"></td>
     </tr>
     </tbody>
 </table>
@@ -150,14 +153,31 @@
             document.getElementById("data-display3").appendChild(newSellElement)
 
         });
-        console.log(data)
+    });
+
+    socket.on("vatanGameData", (data) => {
+        data.forEach((element) => {
+            // create a new HTML element to display the data
+            const newBuyElement = document.createElement("td");
+            newBuyElement.innerHTML = element.buy_price;
+            // append the element to the existing HTML
+            document.getElementById("data-display4").appendChild(newBuyElement);
+
+            // create new HTML element for sell_price
+            const newSellElement = document.createElement("td");
+            newSellElement.innerHTML = element.sell_price;
+            // append the element to the existing HTML
+            document.getElementById("data-display4").appendChild(newSellElement)
+            console.log(data)
+        });
+
     });
 
     socket.on("serverNames", (data) => {
         data.forEach((sunucuAD) => {
             // create new HTML element for sell_price
             const svname = document.createElement("td");
-            svname.innerHTML = sunucuAD.name;
+            svname.innerHTML = sunucuAD.name.toUpperCase();
             svname.setAttribute("colspan", "2");
             // append the element to the existing HTML
             document.getElementById("servername").appendChild(svname);
