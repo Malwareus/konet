@@ -62,11 +62,35 @@
             }
             const socket = io.connect('http://localhost:3000');
             socket.emit('klasGamePrices',klasGamePrices);
-            console.log(klasGamePrices)
         });
+</script>
 
+<script>
+    //OYUNEKS FETCH
+    fetch('https://corsproxy.io/?https://oyuneks.com/game-gold/knight-online-goldbar-alim-satim')
+        .then(response => response.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, "text/html");
+            const oyunEksGb = doc.querySelector('.items-collection-wrapper');
+            const oyunEksBuyCek = Array.from(oyunEksGb.querySelectorAll('.satinal'));
+            const oyunEksSellCek = Array.from(oyunEksGb.querySelectorAll('.satis'));
+            const oyunEksNameCek = Array.from(oyunEksGb.querySelectorAll('.item-col-center'))
+            const oyunEksPrices = [];
+            for(let i=0; i<oyunEksSellCek.length; i++){
+                const sell = oyunEksSellCek[i].querySelector("h5");
+                const oyunEkSell = parseFloat(sell.textContent.replace(/\n/g, "").replace(/[^0-9,]/g, "").replace(',','.'));
+                const buy = oyunEksBuyCek[i].querySelector("h5");
+                const oyunEksBuy = parseFloat(buy.textContent.replace(/\n/g, "").replace(/[^0-9,]/g, "").replace(',','.'));
+                const name = oyunEksNameCek[i].querySelector("h5");
+                const oyunEksName = name.textContent.split(" ",)[2];
+                oyunEksPrices.push({oyunEksSell:oyunEkSell, oyunEksBuy:oyunEksBuy, oyunEksName:oyunEksName})
+            }
 
-
+            console.log(oyunEksPrices)
+            const socket = io.connect('http://localhost:3000');
+            socket.emit('oyunEksPrices',oyunEksPrices);
+        });
 </script>
 </body>
 </html>

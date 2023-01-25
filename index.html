@@ -50,14 +50,14 @@
 
 <table class="text-center table table-bordered table-dark" id="data-table" style="margin-top: 100px;">
     <tbody>
-    <tr>
+    <tr style="vertical-align: middle;">
         <td colspan="3" rowspan="3"><p>Server</p><p>Site</p></td>
     </tr>
 
-    <tr id="servername" style="color: aqua; font-weight: bold">
+    <tr id="servername" style="color: aqua; font-weight: bold; vertical-align: middle">
 
     </tr>
-    <tr>
+    <tr style="vertical-align: middle;">
         <th>Alış</th>
         <th>Satış</th>
         <th>Alış</th>
@@ -87,11 +87,14 @@
         <th>Alış</th>
         <th>Satış</th>
     </tr>
-    <tr id="data-display">
-        <td colspan="3" rowspan="1"><img src="https://images.gamesatis.com/assets/logo-light.svg" width="130px"></td>
+    <tr id="data-display" style="height: 60px; vertical-align: middle;">
+        <td colspan="3" rowspan="1"><img src="https://images.gamesatis.com/assets/logo-light.svg" width="110px"></td>
     </tr>
-    <tr id="data-display2">
-        <td colspan="3" rowspan="3"><img src="https://www.klasgame.com/theme/klasgame2020/image/logo.png" width="130px"></td>
+    <tr id="data-display2" style="height: 60px; vertical-align: middle;">
+        <td colspan="3" rowspan="1"><img src="https://www.klasgame.com/theme/klasgame2020/image/logo.png" width="110px"></td>
+    </tr>
+    <tr id="data-display3" style="height: 60px; vertical-align: middle;">
+        <td colspan="3" rowspan="3"><img src="https://oyuneks.com/public/front/site/oyuneks-1-1630332428.png" width="110px"></td>
     </tr>
     </tbody>
 </table>
@@ -132,6 +135,23 @@
         });
     });
 
+    socket.on("oyunEksData", (data) => {
+        data.forEach((element) => {
+            // create a new HTML element to display the data
+            const newBuyElement = document.createElement("td");
+            newBuyElement.innerHTML = element.buy_price;
+            // append the element to the existing HTML
+            document.getElementById("data-display3").appendChild(newBuyElement);
+
+            // create new HTML element for sell_price
+            const newSellElement = document.createElement("td");
+            newSellElement.innerHTML = element.sell_price;
+            // append the element to the existing HTML
+            document.getElementById("data-display3").appendChild(newSellElement)
+
+        });
+        console.log(data)
+    });
 
     socket.on("serverNames", (data) => {
         data.forEach((sunucuAD) => {
