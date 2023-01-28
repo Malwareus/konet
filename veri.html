@@ -53,12 +53,15 @@
             let klasGameBuyPrice;
             let klasGameSellPrice;
             let klasGameName;
+            let priceOndalik;
             let klasGamePrices = [];
             for (let i = 0; i < klasGameBuyCek.length; i += 1) {
                 klasGameBuyPrice = klasGameBuyCek[i].textContent.match(/\d+(\.\d+)?/g).join('.');
                 klasGameSellPrice = klasGameSellCek[i].textContent.match(/\d+(\.\d+)?/g).join('.');
+                priceOndalik = klasGameNameCek[i].textContent.match(/\d+/)[0];
                 klasGameName = klasGameNameCek[i].textContent.split(" ")[0].replace('\n','').toLowerCase();
                 klasGamePrices.push({klasGameBuy:klasGameBuyPrice, klasGameSell:klasGameSellPrice, klasGameName:klasGameName})
+                console.log(priceOndalik)
             }
             const socket = io.connect('http://localhost:3000');
             socket.emit('klasGamePrices',klasGamePrices);
@@ -66,7 +69,7 @@
 </script>
 
 <script>
-    //OYUNEKS FETCH
+    //OYUNEKS FETCH ÇALIŞMIYOR
     fetch('https://corsproxy.io/?https://oyuneks.com/game-gold/knight-online-goldbar-alim-satim')
         .then(response => response.text())
         .then(html => {
@@ -77,17 +80,17 @@
             const oyunEksSellCek = Array.from(oyunEksGb.querySelectorAll('.satis'));
             const oyunEksNameCek = Array.from(oyunEksGb.querySelectorAll('.item-col-center'))
             const oyunEksPrices = [];
-            for(let i=0; i<oyunEksSellCek.length; i++){
+            for(let i=0; i<oyunEksBuyCek.length; i++){
                 const sell = oyunEksSellCek[i].querySelector("h5");
                 const oyunEkSell = parseFloat(sell.textContent.replace(/\n/g, "").replace(/[^0-9,]/g, "").replace(',','.'));
                 const buy = oyunEksBuyCek[i].querySelector("h5");
                 const oyunEksBuy = parseFloat(buy.textContent.replace(/\n/g, "").replace(/[^0-9,]/g, "").replace(',','.'));
                 const name = oyunEksNameCek[i].querySelector("h5");
-                const oyunEksName = name.textContent.split(" ",)[2].toLowerCase();
-                oyunEksPrices.push({oyunEksSell:oyunEkSell, oyunEksBuy:oyunEksBuy, oyunEksName:oyunEksName})
+                const oyunEksName = name.textContent.split(" ")[2].toUpperCase();
+                oyunEksPrices.push({oyunEkSell:oyunEkSell, oyunEksBuy:oyunEksBuy, oyunEksName:oyunEksName})
             }
             const socket = io.connect('http://localhost:3000');
-            socket.emit('oyunEksPrices',oyunEksPrices);
+            socket.emit('oyunEksPrice',oyunEksPrices);
         });
 </script>
 
@@ -102,12 +105,12 @@
             const vatanGameBuyCek = Array.from(vatanGameGb.querySelectorAll('span.d-block.gm-product-price'));
             const vatanGameSellCek = Array.from(vatanGameGb.querySelectorAll('.gm-product-price.mt-4.mt-lg-0.align-self-center.w-50'));
             const vatanGameNameCek = Array.from(vatanGameGb.querySelectorAll('.gm-product-caption'));
-            let vatanGameBuyPrice;
-            let vatanGameSellPrice;
             let vatanGameName;
             let vatanGamePrices = [];
             for (let i = 0; i < vatanGameBuyCek.length; i += 1) {
-                vatanGameName = vatanGameNameCek[i].textContent.split(" ",)[2].toLowerCase();
+                let vatanGameBuyPrice = 0;
+                let vatanGameSellPrice = 0;
+                vatanGameName = vatanGameNameCek[i].textContent.split(" ")[2].toUpperCase().replace(/İ/g, "I");;
                 vatanGameBuyPrice = vatanGameBuyCek[i].innerHTML;
                 const vatanGameBuyPriceClean = vatanGameBuyPrice.match(/<b>(.*?)<\/b>/)[1].replace(" TL", "");
                 vatanGameSellPrice = vatanGameSellCek[i].innerHTML;

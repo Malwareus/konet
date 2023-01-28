@@ -12,11 +12,13 @@
 
 <style>
     #container{
-        background-color: #000;
+        background-color: #171a21;
     }
     #data-table {
-        width: 100%;
+        width: 80%;
         border-collapse: collapse;
+        margin:30px auto;
+        box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
     }
     #data-table th, #data-table td {
         border: 1px solid black;
@@ -48,7 +50,13 @@
 </nav>
 
 
-<table class="text-center table table-bordered table-dark" id="data-table" style="margin-top: 100px;">
+
+<div class="row justify-content-center text-center" style="margin:30px auto;;">
+    <div class="col-4" style="background-color: #212529; color:#FFF; padding: 2rem;">REKLAM ALANI</div>
+    <div class="col-4" style="background-color: #212529; color:#FFF; padding: 2rem; margin-left:250px;">REKLAM ALANI</div>
+</div>
+
+<table class="text-center table table-bordered table-dark" id="data-table">
     <tbody>
     <tr style="vertical-align: middle;">
         <td colspan="3" rowspan="3"><p>Server</p><p>Site</p></td>
@@ -57,9 +65,7 @@
     <tr id="servername" style="color: aqua; font-weight: bold; vertical-align: middle">
 
     </tr>
-    <tr style="vertical-align: middle;">
-        <th>Alış</th>
-        <th>Satış</th>
+    <tr style="vertical-align: middle; ">
         <th>Alış</th>
         <th>Satış</th>
         <th>Alış</th>
@@ -168,7 +174,6 @@
             newSellElement.innerHTML = element.sell_price;
             // append the element to the existing HTML
             document.getElementById("data-display4").appendChild(newSellElement)
-            console.log(data)
         });
 
     });

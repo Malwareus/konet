@@ -57,15 +57,7 @@ io.on("connection", async (socket) => {
                 console.log(err.stack);
             }
         }
-        for (let i = 0; i < data.length; i++) {
-            const queryText2 = `UPDATE servers SET name = $1 WHERE server_id = $2`;
-            const values = [data[i].name, i + 1];
-            try {
-                const res = await pool.query(queryText2, values);
-            } catch (err) {
-                console.log(err.stack);
-            }
-        }
+
         console.log(`GameSatış'tan gelen goldbar fiyatları güncellendi`);
         console.log(`Sunucu isimleri güncellendi`);
     });
@@ -92,17 +84,17 @@ io.on("connection", async (socket) => {
                 }
             }
     });
-
-
     const resKg = await pool.query("SELECT * FROM prices WHERE site_id = 2 ORDER BY server_id ASC");
     socket.emit("KlasGameData", resKg.rows);
 
-    socket.on("oyunEksPrices", async (data) => {
+    socket.on("oyunEksPrice", async (data) => {
+        console.log(data)
         for (let i = 0; i < data.length; i++) {
             const queryText = `UPDATE prices SET buy_price = $1, sell_price = $2 WHERE server_id = (SELECT server_id FROM servers WHERE name = $3) AND (site_id= 3)`;
-            const values = [data[i].oyunEksBuy, data[i].oyunEksSell, data[i].oyunEksName];
+            const values = [data[i].oyunEksBuy, data[i].oyunEkSell, data[i].oyunEksName];
             try {
                 const res = await pool.query(queryText, values);
+                console.log(values)
             } catch (err) {
                 console.log(err.stack);
             }
@@ -115,11 +107,10 @@ io.on("connection", async (socket) => {
 
     socket.on("vatanGamePrices", async (data) => {
         for (let i = 0; i < data.length; i++) {
-            const queryText = `UPDATE prices SET buy_price = $1, sell_price = $2 WHERE server_id = (SELECT server_id FROM servers WHERE name = $3) AND (site_id= 4)`;
+            const queryText = `UPDATE prices SET buy_price = $1, sell_price =$2 WHERE server_id= (SELECT server_id FROM servers WHERE name = $3) AND (site_id= 4)`;
             const values = [data[i].vatanGameBuyPriceClean, data[i].vatanGameSellPriceClean, data[i].vatanGameName];
             try {
                 const res = await pool.query(queryText, values);
-                console.log(res.rowCount)
             } catch (err) {
                 console.log(err.stack);
             }
