@@ -120,6 +120,38 @@ io.on("connection", async (socket) => {
     const resVg = await pool.query("SELECT * FROM prices WHERE site_id = 4 ORDER BY server_id ASC");
     socket.emit("vatanGameData", resVg.rows);
 
+    socket.on("bynoGamePrices", async (data) => {
+        for (let i = 0; i < data.length; i++) {
+            const queryText = `UPDATE prices SET buy_price = $1, sell_price =$2 WHERE server_id= (SELECT server_id FROM servers WHERE name = $3) AND (site_id= 5)`;
+            const values = [data[i].bynoGameBuyPrice, data[i].bynoGameSellPrice, data[i].bynoGameName];
+            try {
+                const res = await pool.query(queryText, values);
+            } catch (err) {
+                console.log(err.stack);
+            }
+        }
+    });
+
+    const resBg = await pool.query("SELECT * FROM prices WHERE site_id = 5 ORDER BY server_id ASC");
+    socket.emit("bynoGameData", resBg.rows);
+
+
+    socket.on("koPazarPrices", async (data) => {
+        console.log(data)
+        for (let i = 0; i < data.length; i++) {
+            const queryText = `UPDATE prices SET buy_price = $1, sell_price =$2 WHERE server_id= (SELECT server_id FROM servers WHERE name = $3) AND (site_id= 6)`;
+            const values = [data[i].koPazarBuyPrice, data[i].koPazarSellPrice, data[i].koPazarName];
+            try {
+                const res = await pool.query(queryText, values);
+            } catch (err) {
+                console.log(err.stack);
+            }
+        }
+    });
+
+    const resKp = await pool.query("SELECT * FROM prices WHERE site_id = 6 ORDER BY server_id ASC");
+    socket.emit("koPazarData", resKp.rows);
+
 });
 
 

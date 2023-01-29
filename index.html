@@ -15,7 +15,7 @@
         background-color: #171a21;
     }
     #data-table {
-        width: 80%;
+        width: 100%;
         border-collapse: collapse;
         margin:30px auto;
         box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
@@ -50,13 +50,17 @@
 </nav>
 
 
-
-<div class="row justify-content-center text-center" style="margin:30px auto;;">
-    <div class="col-4" style="background-color: #212529; color:#FFF; padding: 2rem;">REKLAM ALANI</div>
-    <div class="col-4" style="background-color: #212529; color:#FFF; padding: 2rem; margin-left:250px;">REKLAM ALANI</div>
+<div class="row" style="width: 1640px; margin:30px auto;">
+    <div class="col-sm-6">
+        <img src="https://images-ext-1.discordapp.net/external/jKTqCg3YGW3iglMEp4Q5APzsBgfjUmOjDA6oJZ0ep-8/https/img.gamesatis.com/editor-files/knight-online-gold-bar-343.jpeg" width="650" style="float: left">
+    </div>
+    <div class="col-sm-6">
+        <img src="https://images-ext-1.discordapp.net/external/jKTqCg3YGW3iglMEp4Q5APzsBgfjUmOjDA6oJZ0ep-8/https/img.gamesatis.com/editor-files/knight-online-gold-bar-343.jpeg" width="650" height="80" style="float: right">
+    </div>
 </div>
 
-<table class="text-center table table-bordered table-dark" id="data-table">
+
+<table class="text-center table table-bordered table-dark" style="width: 1620px" id="data-table">
     <tbody>
     <tr style="vertical-align: middle;">
         <td colspan="3" rowspan="3"><p>Server</p><p>Site</p></td>
@@ -105,10 +109,14 @@
     <tr id="data-display4" style="height: 60px; vertical-align: middle;">
         <td colspan="3" rowspan="1"><img src="https://www.vatangame.com/public/vatangame-ikinci-yil.png" width="110px"></td>
     </tr>
+    <tr id="data-display5" style="height: 60px; vertical-align: middle;">
+        <td colspan="3" rowspan="1"><img src="https://cdn.bynogame.com/destek/logo1-1668681721683.png" width="110px"></td>
+    </tr>
+    <tr id="data-display6" style="height: 60px; vertical-align: middle;">
+        <td colspan="3" rowspan="1"><img src="https://www.kopazar.com/images/kopazar-logo.png" width="110px"></td>
+    </tr>
     </tbody>
 </table>
-
-
 <script>
     const socket = io.connect("http://localhost:3000");
     socket.on("GameSatisData", (data) => {
@@ -174,6 +182,40 @@
             newSellElement.innerHTML = element.sell_price;
             // append the element to the existing HTML
             document.getElementById("data-display4").appendChild(newSellElement)
+        });
+
+    });
+
+    socket.on("bynoGameData", (data) => {
+        data.forEach((element) => {
+            // create a new HTML element to display the data
+            const newBuyElement = document.createElement("td");
+            newBuyElement.innerHTML = element.buy_price;
+            // append the element to the existing HTML
+            document.getElementById("data-display5").appendChild(newBuyElement);
+
+            // create new HTML element for sell_price
+            const newSellElement = document.createElement("td");
+            newSellElement.innerHTML = element.sell_price;
+            // append the element to the existing HTML
+            document.getElementById("data-display5").appendChild(newSellElement)
+        });
+
+    });
+
+    socket.on("koPazarData", (data) => {
+        data.forEach((element) => {
+            // create a new HTML element to display the data
+            const newBuyElement = document.createElement("td");
+            newBuyElement.innerHTML = element.buy_price;
+            // append the element to the existing HTML
+            document.getElementById("data-display6").appendChild(newBuyElement);
+
+            // create new HTML element for sell_price
+            const newSellElement = document.createElement("td");
+            newSellElement.innerHTML = element.sell_price;
+            // append the element to the existing HTML
+            document.getElementById("data-display6").appendChild(newSellElement)
         });
 
     });

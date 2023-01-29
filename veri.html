@@ -40,7 +40,7 @@
 </script>
 
 <script>
-    //KABASAKAL FETCH
+    //KLASGAME FETCH
     fetch('https://api.allorigins.win/raw?url=https://www.klasgame.com/knightonline/knight-online-gb-goldbar-premium-cash')
         .then(response => response.text())
         .then(html => {
@@ -87,7 +87,6 @@
                 const oyunEksBuy = parseFloat(buy.textContent.replace(/\n/g, "").replace(/[^0-9,]/g, "").replace(',','.'));
                 const name = oyunEksNameCek[i].querySelector("h5");
                 const oyunEksName = name.textContent.split(" ")[2].toUpperCase();
-                oyunEksPrices.push({oyunEkSell:oyunEkSell, oyunEksBuy:oyunEksBuy, oyunEksName:oyunEksName})
             }
             const socket = io.connect('http://localhost:3000');
             socket.emit('oyunEksPrice',oyunEksPrices);
@@ -116,12 +115,66 @@
                 vatanGameSellPrice = vatanGameSellCek[i].innerHTML;
                 const vatanGameSellPriceClean = vatanGameSellPrice.replace(" TL", "");
                 vatanGamePrices.push({vatanGameBuyPriceClean:vatanGameBuyPriceClean, vatanGameSellPriceClean:vatanGameSellPriceClean, vatanGameName:vatanGameName})
-                console.log(vatanGameBuyPriceClean, vatanGameSellPriceClean, vatanGameName)
             }
 
             const socket = io.connect('http://localhost:3000');
             socket.emit('vatanGamePrices',vatanGamePrices);
         });
 </script>
+
+<script>
+    //BYNOGAME FETCH
+    fetch('https://corsproxy.io/?https://www.bynogame.com/tr/oyunlar/knight-online/gold-bar')
+        .then(response => response.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, "text/html");
+            const bynoGameContainer = doc.getElementById('scrollItems');
+            const bynoGameSellCek = bynoGameContainer.querySelectorAll('[itemprop="price"]');
+            const bynoGameBuyKontrol = Array.from(bynoGameContainer.querySelectorAll("form[action='/tr/satis-onay'] button[type='submit']"));
+            const bynoGameNames = bynoGameContainer.querySelectorAll("h2.font-weight-bolder.text-left")
+            let bynoGameSellPrice;
+            let bynoGameBuyPrice;
+            let bynoGamePrices = [];
+            let bynoGameName;
+            for (let i = 0; i < bynoGameSellCek.length; i++){
+                bynoGameName = bynoGameNames[i].textContent.split(" ")[2].toUpperCase();
+                bynoGameSellPrice = bynoGameSellCek[i].textContent.replace(",",".");
+                bynoGameBuyPrice = bynoGameBuyKontrol[i].innerText.split(" ")[1];
+                bynoGamePrices.push({bynoGameBuyPrice:bynoGameBuyPrice, bynoGameSellPrice:bynoGameSellPrice, bynoGameName:bynoGameName})
+            }
+
+            const socket = io.connect('http://localhost:3000');
+            socket.emit('bynoGamePrices', bynoGamePrices);
+        });
+</script>
+
+<script>
+    //KOPAZAR FETCH
+    fetch('https://corsproxy.io/?https://www.kopazar.com/knight-online-gold-bar')
+        .then(response => response.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, "text/html");
+            const koPazarContainer = doc.querySelector('.container-desktop');
+            const koPazarBuy = koPazarContainer.querySelectorAll("strong.caret-up");
+            const koPazarSell = koPazarContainer.querySelectorAll(".col-xl-3.col-lg-6.col-sm-3.col-6.order-xl-3.order-lg-2.order-sm-3.order-2.xl-text-right.text-center")
+            const koPazarNameFind = koPazarContainer.querySelectorAll(".col-xl-3.col-lg-4.col-md-10.col-sm-6.col-9")
+            let koPazarPrices = [];
+            for (let i = 0; i < koPazarSell.length; i++){
+                const koPazarBuyPrice = parseFloat(koPazarBuy[i].innerHTML.match(/\d+(\.\d+)?/g));
+                const koPazarSellPrice = parseFloat(koPazarSell[i].innerHTML.match(/\d+(\.\d+)?/g));
+                const koPazarNameCek = koPazarNameFind[i].querySelector("span");
+                const koPazarName = koPazarNameCek.textContent.split(" ")[0].toUpperCase();
+                koPazarPrices.push({koPazarBuyPrice:koPazarBuyPrice, koPazarSellPrice:koPazarSellPrice, koPazarName:koPazarName})
+                console.log(koPazarName);
+            }
+
+
+            const socket = io.connect('http://localhost:3000');
+            socket.emit('koPazarPrices', koPazarPrices);
+        });
+</script>
+
 </body>
 </html>
