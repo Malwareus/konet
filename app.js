@@ -47,7 +47,8 @@ pool.connect(function(err){
 io.on("connection", async (socket) => {
 
     //Bu bölümde GameSatış'tan gelen fiyat ve server isimleri yakalanıyor ve veri tabanında güncelleniyor.
-    socket.on("gameSatisPrices", async (data) => {
+    setTimeout(async () => {
+        socket.on("gameSatisPrices", async (data) => {
         for (let i = 0; i < data.length; i++) {
             const queryText = `UPDATE prices SET buy_price = $1, sell_price = $2 WHERE server_id = $3 AND (site_id= 1)`;
             const values = [data[i].buy, data[i].sell, i + 1];
@@ -61,6 +62,7 @@ io.on("connection", async (socket) => {
         console.log(`GameSatış'tan gelen goldbar fiyatları güncellendi`);
         console.log(`Sunucu isimleri güncellendi`);
     });
+    }, 15000);
 
     //GameSatış'a ait fiyatlar çekilip, anasayfaya gönderiliyor.
     const resGms = await pool.query("SELECT * FROM prices WHERE site_id = 1");
@@ -72,6 +74,7 @@ io.on("connection", async (socket) => {
 
 
     //Bu bölümde KlasGame'den gelen fiyat ve server isimleri yakalanıyor ve veri tabanında güncelleniyor.
+    setTimeout(async () => {
 
     socket.on("klasGamePrices", async (data) => {
             for (let i = 0; i < data.length; i++) {
@@ -84,10 +87,13 @@ io.on("connection", async (socket) => {
                 }
             }
     });
+    }, 15000);
+
     const resKg = await pool.query("SELECT * FROM prices WHERE site_id = 2 ORDER BY server_id ASC");
     socket.emit("KlasGameData", resKg.rows);
 
-    socket.on("oyunEksPrice", async (data) => {
+    setTimeout(async () => {
+        socket.on("oyunEksPrice", async (data) => {
         console.log(data)
         for (let i = 0; i < data.length; i++) {
             const queryText = `UPDATE prices SET buy_price = $1, sell_price = $2 WHERE server_id = (SELECT server_id FROM servers WHERE name = $3) AND (site_id= 3)`;
@@ -100,11 +106,12 @@ io.on("connection", async (socket) => {
             }
         }
     });
+    }, 15000);
 
     const resOe = await pool.query("SELECT * FROM prices WHERE site_id = 3 ORDER BY server_id ASC");
     socket.emit("oyunEksData", resOe.rows);
 
-
+    setTimeout(async () => {
     socket.on("vatanGamePrices", async (data) => {
         for (let i = 0; i < data.length; i++) {
             const queryText = `UPDATE prices SET buy_price = $1, sell_price =$2 WHERE server_id= (SELECT server_id FROM servers WHERE name = $3) AND (site_id= 4)`;
@@ -116,11 +123,13 @@ io.on("connection", async (socket) => {
             }
         }
     });
+    }, 15000);
 
     const resVg = await pool.query("SELECT * FROM prices WHERE site_id = 4 ORDER BY server_id ASC");
     socket.emit("vatanGameData", resVg.rows);
 
-    socket.on("bynoGamePrices", async (data) => {
+    setTimeout(async () => {
+        socket.on("bynoGamePrices", async (data) => {
         for (let i = 0; i < data.length; i++) {
             const queryText = `UPDATE prices SET buy_price = $1, sell_price =$2 WHERE server_id= (SELECT server_id FROM servers WHERE name = $3) AND (site_id= 5)`;
             const values = [data[i].bynoGameBuyPrice, data[i].bynoGameSellPrice, data[i].bynoGameName];
@@ -131,11 +140,12 @@ io.on("connection", async (socket) => {
             }
         }
     });
+    }, 15000);
 
     const resBg = await pool.query("SELECT * FROM prices WHERE site_id = 5 ORDER BY server_id ASC");
     socket.emit("bynoGameData", resBg.rows);
 
-
+    setTimeout(async () => {
     socket.on("koPazarPrices", async (data) => {
         console.log(data)
         for (let i = 0; i < data.length; i++) {
@@ -148,9 +158,28 @@ io.on("connection", async (socket) => {
             }
         }
     });
+    }, 15000);
 
     const resKp = await pool.query("SELECT * FROM prices WHERE site_id = 6 ORDER BY server_id ASC");
     socket.emit("koPazarData", resKp.rows);
+
+    setTimeout(async () => {
+        socket.on("kabasakalPrices", async (data) => {
+        for (let i = 0; i < data.length; i++) {
+            const queryText = `UPDATE prices SET buy_price = $1, sell_price =$2 WHERE server_id= (SELECT server_id FROM servers WHERE name = $3) AND (site_id= 7)`;
+            const values = [data[i].kabasakalOnlineBuy, data[i].kabasakalOnlineSell, data[i].kabasakalName];
+            try {
+                const res = await pool.query(queryText, values);
+            } catch (err) {
+                console.log(err.stack);
+            }
+        }
+            console.log(data)
+        });
+    }, 15000);
+
+    const resKso = await pool.query("SELECT * FROM prices WHERE site_id = 7 ORDER BY server_id ASC");
+    socket.emit("kabasakalData", resKso.rows);
 
 });
 

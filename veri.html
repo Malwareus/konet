@@ -13,7 +13,7 @@
 <script>
 
     //GAMESATIŞ FETCH
-
+    setTimeout(async () => {
     fetch('https://api.allorigins.win/raw?url=https://www.gamesatis.com/knight-online-goldbar')
         .then(response => response.text())
         .then(html => {
@@ -34,6 +34,7 @@
             const socket = io.connect('http://localhost:3000');
             socket.emit('gameSatisPrices',prices);
         });
+    }, 15000);
 
 
 
@@ -167,13 +168,38 @@
                 const koPazarNameCek = koPazarNameFind[i].querySelector("span");
                 const koPazarName = koPazarNameCek.textContent.split(" ")[0].toUpperCase();
                 koPazarPrices.push({koPazarBuyPrice:koPazarBuyPrice, koPazarSellPrice:koPazarSellPrice, koPazarName:koPazarName})
-                console.log(koPazarName);
             }
-
-
             const socket = io.connect('http://localhost:3000');
             socket.emit('koPazarPrices', koPazarPrices);
         });
+</script>
+
+<script>
+    //KABASAKALONLINE FETCH
+    setTimeout(async () => {
+        fetch('https://corsproxy.io/?https://www.kabasakalonline.com/knight-online/knight-online-goldbar')
+        .then(response => response.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, "text/html");
+            const kabasakalOnline = doc.querySelector('.product-list-a1');
+            const kabasakalOnlineBuyCek = kabasakalOnline.querySelectorAll('span[data-type="price"]');
+            const kabasakalSellCek = kabasakalOnline.querySelectorAll('.sellto.waves-effect.waves-light');
+            const kabasakalNameCek = kabasakalOnline.querySelectorAll('h2.name')
+            let kabasakalPrices = [];
+            for (let i = 0; i < kabasakalOnlineBuyCek.length; i++){
+                const kabasakalOnlineBuy = kabasakalOnlineBuyCek[i].textContent.replace(",",".");
+                const kabasakalOnlineSell = kabasakalSellCek[i].textContent.split(" ")[2].replace(",",".");
+                const kabasakalName = kabasakalNameCek[i].textContent.split(" ")[0].toUpperCase();
+                kabasakalPrices.push({kabasakalOnlineBuy:kabasakalOnlineBuy,kabasakalOnlineSell:kabasakalOnlineSell,kabasakalName:kabasakalName})
+                console.log(kabasakalOnlineBuy, kabasakalOnlineSell, kabasakalName)
+            }
+            const socket = io.connect('http://localhost:3000');
+            socket.emit('kabasakalPrices', kabasakalPrices);
+
+        });
+    }, 15000);
+
 </script>
 
 </body>
