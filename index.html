@@ -26,8 +26,8 @@
     }
 </style>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="#" style="padding-left: 30px;">
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color:#212630">
+    <a class="navbar-brand" href="#" style="padding-left: 30px; padding-top: 1.25rem; padding-bottom: 1.25rem; height:80px;">
         <img src="https://serverkurmacom10052.zapwp.com/q:i/r:1/wp:1/w:1/u:https://serverkurma.com/wp-content/uploads/2018/11/ko-logo.png" height="40" alt="Logo">
     </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,17 +50,18 @@
 </nav>
 
 
+
 <div class="row" style="width: 1640px; margin:30px auto;">
     <div class="col-sm-6">
-        <img src="https://images-ext-1.discordapp.net/external/jKTqCg3YGW3iglMEp4Q5APzsBgfjUmOjDA6oJZ0ep-8/https/img.gamesatis.com/editor-files/knight-online-gold-bar-343.jpeg" width="650" style="float: left">
+        <img src="https://img.gamesatis.com/editor-files/knight-online-gold-bar-343.jpeg" width="650" style="float: left">
     </div>
     <div class="col-sm-6">
-        <img src="https://images-ext-1.discordapp.net/external/jKTqCg3YGW3iglMEp4Q5APzsBgfjUmOjDA6oJZ0ep-8/https/img.gamesatis.com/editor-files/knight-online-gold-bar-343.jpeg" width="650" height="80" style="float: right">
+        <img src="https://img.gamesatis.com/editor-files/knight-online-gold-bar-343.jpeg" width="650" height="80" style="float: right">
     </div>
 </div>
 
 
-<table class="text-center table table-bordered table-dark" style="width: 1620px" id="data-table">
+<table class="text-center table table-bordered" style="width: 1620px; background-color:#212630; color:#FFF;" id="data-table">
     <tbody>
     <tr style="vertical-align: middle;">
         <td colspan="3" rowspan="3"><p>Server</p><p>Site</p></td>
@@ -117,6 +118,12 @@
     </tr>
     <tr id="data-display7" style="height: 60px; vertical-align: middle;">
         <td colspan="3" rowspan="1"><img src="https://www.kabasakalonline.com/theme/default/assets/img/logo.png?v=0.1" width="110px"></td>
+    </tr>
+    <tr id="data-display8" style="height: 60px; vertical-align: middle;">
+        <td colspan="3" rowspan="1"><img src="https://www.bursagb.com/new/img/logo.webp" width="110px"></td>
+    </tr>
+    <tr id="data-display9" style="height: 60px; vertical-align: middle;">
+        <td colspan="3" rowspan="1"><img src="https://cdn-eu.oyunfor.com/Public/standart/web/dist/img/logo.png?v1" width="110px"></td>
     </tr>
     </tbody>
 </table>
@@ -236,6 +243,40 @@
             newSellElement.innerHTML = element.sell_price;
             // append the element to the existing HTML
             document.getElementById("data-display7").appendChild(newSellElement)
+        });
+
+    });
+
+    socket.on("BursaGbData", (data) => {
+        data.forEach((element) => {
+            // create a new HTML element to display the data
+            const newBuyElement = document.createElement("td");
+            newBuyElement.innerHTML = element.buy_price;
+            // append the element to the existing HTML
+            document.getElementById("data-display8").appendChild(newBuyElement);
+
+            // create new HTML element for sell_price
+            const newSellElement = document.createElement("td");
+            newSellElement.innerHTML = element.sell_price;
+            // append the element to the existing HTML
+            document.getElementById("data-display8").appendChild(newSellElement)
+        });
+
+    });
+
+    socket.on("oyunForData", (data) => {
+        data.forEach((element) => {
+            // create a new HTML element to display the data
+            const newBuyElement = document.createElement("td");
+            newBuyElement.innerHTML = element.buy_price;
+            // append the element to the existing HTML
+            document.getElementById("data-display9").appendChild(newBuyElement);
+
+            // create new HTML element for sell_price
+            const newSellElement = document.createElement("td");
+            newSellElement.innerHTML = element.sell_price;
+            // append the element to the existing HTML
+            document.getElementById("data-display9").appendChild(newSellElement)
         });
 
     });

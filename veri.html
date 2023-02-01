@@ -13,7 +13,6 @@
 <script>
 
     //GAMESATIŞ FETCH
-    setTimeout(async () => {
     fetch('https://api.allorigins.win/raw?url=https://www.gamesatis.com/knight-online-goldbar')
         .then(response => response.text())
         .then(html => {
@@ -34,7 +33,6 @@
             const socket = io.connect('http://localhost:3000');
             socket.emit('gameSatisPrices',prices);
         });
-    }, 15000);
 
 
 
@@ -42,7 +40,7 @@
 
 <script>
     //KLASGAME FETCH
-    fetch('https://api.allorigins.win/raw?url=https://www.klasgame.com/knightonline/knight-online-gb-goldbar-premium-cash')
+        fetch('https://corsproxy.io/?https://www.klasgame.com/knightonline/knight-online-gb-goldbar-premium-cash')
         .then(response => response.text())
         .then(html => {
             const parser = new DOMParser();
@@ -51,27 +49,23 @@
             const klasGameBuyCek = klasGameGb.querySelectorAll('.product-price.margin-right-10.price')
             const klasGameSellCek = klasGameGb.querySelectorAll('.product-button-area')
             const klasGameNameCek = Array.from(klasGameGb.querySelectorAll('.product-title[data-type="object-name"]'));
-            let klasGameBuyPrice;
-            let klasGameSellPrice;
-            let klasGameName;
-            let priceOndalik;
             let klasGamePrices = [];
-            for (let i = 0; i < klasGameBuyCek.length; i += 1) {
-                klasGameBuyPrice = klasGameBuyCek[i].textContent.match(/\d+(\.\d+)?/g).join('.');
-                klasGameSellPrice = klasGameSellCek[i].textContent.match(/\d+(\.\d+)?/g).join('.');
-                priceOndalik = klasGameNameCek[i].textContent.match(/\d+/)[0];
-                klasGameName = klasGameNameCek[i].textContent.split(" ")[0].replace('\n','').toLowerCase();
+            for (let i = 0; i < klasGameNameCek.length; i++) {
+                const klasGameBuyPrice = klasGameBuyCek[i].textContent.match(/\d+(\.\d+)?/g).join('.');
+                const klasGameSellPrice = klasGameSellCek[i].textContent.match(/\d+(\.\d+)?/g).join('.');
+                const klasGameName = klasGameNameCek[i].textContent.split(" ")[0].replace('\n','').toUpperCase();
                 klasGamePrices.push({klasGameBuy:klasGameBuyPrice, klasGameSell:klasGameSellPrice, klasGameName:klasGameName})
-                console.log(priceOndalik)
             }
             const socket = io.connect('http://localhost:3000');
             socket.emit('klasGamePrices',klasGamePrices);
-        });
+        })
+    klasGamePrices = [];
+
 </script>
 
 <script>
-    //OYUNEKS FETCH ÇALIŞMIYOR
-    fetch('https://corsproxy.io/?https://oyuneks.com/game-gold/knight-online-goldbar-alim-satim')
+    //OYUNEKS FETCH
+    fetch('https://api.allorigins.win/raw?url=https://oyuneks.com/game-gold/knight-online-goldbar-alim-satim')
         .then(response => response.text())
         .then(html => {
             const parser = new DOMParser();
@@ -88,10 +82,14 @@
                 const oyunEksBuy = parseFloat(buy.textContent.replace(/\n/g, "").replace(/[^0-9,]/g, "").replace(',','.'));
                 const name = oyunEksNameCek[i].querySelector("h5");
                 const oyunEksName = name.textContent.split(" ")[2].toUpperCase();
+                oyunEksPrices.push({oyunEksBuy:oyunEksBuy, oyunEkSell:oyunEkSell, oyunEksName:oyunEksName})
             }
             const socket = io.connect('http://localhost:3000');
             socket.emit('oyunEksPrice',oyunEksPrices);
         });
+
+    oyunEksPrices = [];
+
 </script>
 
 <script>
@@ -112,9 +110,9 @@
                 let vatanGameSellPrice = 0;
                 vatanGameName = vatanGameNameCek[i].textContent.split(" ")[2].toUpperCase().replace(/İ/g, "I");;
                 vatanGameBuyPrice = vatanGameBuyCek[i].innerHTML;
-                const vatanGameBuyPriceClean = vatanGameBuyPrice.match(/<b>(.*?)<\/b>/)[1].replace(" TL", "");
+                const vatanGameBuyPriceClean = parseFloat(vatanGameBuyPrice.match(/<b>(.*?)<\/b>/)[1].replace(" TL", "")) * parseFloat(10);
                 vatanGameSellPrice = vatanGameSellCek[i].innerHTML;
-                const vatanGameSellPriceClean = vatanGameSellPrice.replace(" TL", "");
+                const vatanGameSellPriceClean = parseFloat(vatanGameSellPrice.replace(" TL", "")) * parseFloat(10);
                 vatanGamePrices.push({vatanGameBuyPriceClean:vatanGameBuyPriceClean, vatanGameSellPriceClean:vatanGameSellPriceClean, vatanGameName:vatanGameName})
             }
 
@@ -163,20 +161,22 @@
             const koPazarNameFind = koPazarContainer.querySelectorAll(".col-xl-3.col-lg-4.col-md-10.col-sm-6.col-9")
             let koPazarPrices = [];
             for (let i = 0; i < koPazarSell.length; i++){
-                const koPazarBuyPrice = parseFloat(koPazarBuy[i].innerHTML.match(/\d+(\.\d+)?/g));
-                const koPazarSellPrice = parseFloat(koPazarSell[i].innerHTML.match(/\d+(\.\d+)?/g));
-                const koPazarNameCek = koPazarNameFind[i].querySelector("span");
+                const koPazarNameCek = koPazarNameFind[i].querySelector("span")
+                const priceDuzelt = koPazarNameCek.textContent.split(" ")[1];
+                const koPazarBuyPrice = parseFloat(koPazarBuy[i].innerHTML.match(/\d+(\.\d+)?/g)) * parseFloat(priceDuzelt);
+                const koPazarSellPrice = parseFloat(koPazarSell[i].innerHTML.match(/\d+(\.\d+)?/g)) * parseFloat(priceDuzelt);
                 const koPazarName = koPazarNameCek.textContent.split(" ")[0].toUpperCase();
                 koPazarPrices.push({koPazarBuyPrice:koPazarBuyPrice, koPazarSellPrice:koPazarSellPrice, koPazarName:koPazarName})
             }
             const socket = io.connect('http://localhost:3000');
             socket.emit('koPazarPrices', koPazarPrices);
         });
+    koPazarPrices = [];
+
 </script>
 
 <script>
     //KABASAKALONLINE FETCH
-    setTimeout(async () => {
         fetch('https://corsproxy.io/?https://www.kabasakalonline.com/knight-online/knight-online-goldbar')
         .then(response => response.text())
         .then(html => {
@@ -188,20 +188,83 @@
             const kabasakalNameCek = kabasakalOnline.querySelectorAll('h2.name')
             let kabasakalPrices = [];
             for (let i = 0; i < kabasakalOnlineBuyCek.length; i++){
-                const kabasakalOnlineBuy = kabasakalOnlineBuyCek[i].textContent.replace(",",".");
-                const kabasakalOnlineSell = kabasakalSellCek[i].textContent.split(" ")[2].replace(",",".");
+                const priceDuzelt = kabasakalNameCek[i].textContent.match(/\d+(\.\d+)?/)[0];
+                const kabasakalOnlineBuy = parseFloat(kabasakalOnlineBuyCek[i].textContent.replace(",",".")) * parseFloat(priceDuzelt);
+                const kabasakalOnlineSell = parseFloat(kabasakalSellCek[i].textContent.split(" ")[2].replace(",",".")) * parseFloat(priceDuzelt);
                 const kabasakalName = kabasakalNameCek[i].textContent.split(" ")[0].toUpperCase();
                 kabasakalPrices.push({kabasakalOnlineBuy:kabasakalOnlineBuy,kabasakalOnlineSell:kabasakalOnlineSell,kabasakalName:kabasakalName})
-                console.log(kabasakalOnlineBuy, kabasakalOnlineSell, kabasakalName)
             }
-            const socket = io.connect('http://localhost:3000');
+                const socket = io.connect('http://localhost:3000');
             socket.emit('kabasakalPrices', kabasakalPrices);
 
         });
-    }, 15000);
-
+    kabasakalPrices = [];
 
 </script>
+
+
+<script>
+    //BURSAGB FETCH
+    fetch('https://corsproxy.io/?https://www.bursagb.com/knight-online-gold')
+        .then(response => response.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, "text/html");
+            const bursaGb = doc.querySelector('.ps-shopping.ps-tab-root.ml-0')
+            const bursaSell = bursaGb.querySelectorAll('.ps-product__price.text-right')
+            const bursaBuy = bursaGb.querySelectorAll('.ps-btn.mt-1.fs-13.py-2')
+            const bursaName = bursaGb.querySelectorAll('.ps-product__title a')
+            let bursaGbPrices = [];
+            for (let i = 0; i < bursaBuy.length; i++){
+                const priceDuzelt = bursaName[i].textContent.split(" ")[1].toUpperCase().replace("M","");
+                const bursaGbSell = parseFloat(bursaSell[i].textContent.replace(" TL","").replace(",",".")) * parseFloat(priceDuzelt);
+                const bursaGbBuy = parseFloat(bursaBuy[i].textContent.split(" (")[1].split(")")[0]) * parseFloat(priceDuzelt);
+                const bursaGbName = bursaName[i].textContent.split(" ")[0].toUpperCase();
+                bursaGbPrices.push({
+                    bursaGbBuy: bursaGbBuy,
+                    bursaGbSell: bursaGbSell,
+                    bursaGbName: bursaGbName
+                });
+            }
+
+            const socket = io.connect('http://localhost:3000');
+            socket.emit('bursaGbPrices', bursaGbPrices);
+        });
+
+</script>
+
+<script>
+    //OYUNFOR FETCH
+    fetch('https://corsproxy.io/?https://www.oyunfor.com/knight-online/gb-gold-bar')
+        .then(response => response.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, "text/html");
+            const oyunFor = doc.querySelector('.flex-column.products')
+            const oyunForSell = oyunFor.querySelectorAll('.notranslate[style="font-weight: bold;font-size:16px;align-self: flex-end;"]')
+            const oyunForBuy= oyunFor.querySelectorAll('.button.desktop.sellToUsBtn span')
+            const oyunForName = oyunFor.querySelectorAll('h3.productText')
+            const oyunForSw = oyunFor.querySelectorAll('.productText2 ')
+            let oyunForPrices = [];
+
+            for(let i = 0; i < oyunForSell.length; i++){
+                const fiyatDuzelt = oyunForSw[i].textContent.split(" ")[3];
+                const oyunForGbSell = parseFloat(oyunForSell[i].textContent.replace(" TL","")) * parseFloat(fiyatDuzelt);
+                const oyunForGbBuy = parseFloat(oyunForBuy[i].textContent.split(" ")[2]) * parseFloat(fiyatDuzelt);;
+                const oyunForServerName = oyunForName[i].textContent.split(" ")[2].toUpperCase();
+                oyunForPrices.push({
+                    oyunForGbBuy: oyunForGbBuy,
+                    oyunForGbSell: oyunForGbSell,
+                    oyunForServerName: oyunForServerName
+                });
+            }
+            const socket = io.connect('http://localhost:3000');
+            socket.emit('oyunForPrices', oyunForPrices);
+
+        });
+
+</script>
+
 
 </body>
 </html>
