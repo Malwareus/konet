@@ -12,6 +12,19 @@
 
 <script>
 
+    const {Builder, By, Key, until} = require('selenium-webdriver');
+
+    (async function example() {
+        let driver = await new Builder().forBrowser('firefox').build();
+        try {
+            await driver.get('https://gamesatis.com/knight-online-goldbar');
+            const goldbarContainer = await driver.findElement(By.className('goldbar-container')).getAttribute("innerHTML");
+            console.log(goldbarContainer);
+        } finally {
+            await driver.quit();
+        }
+    })();
+
     //GAMESATIŞ FETCH
     fetch('https://api.allorigins.win/raw?url=https://www.gamesatis.com/knight-online-goldbar')
         .then(response => response.text())

@@ -6,7 +6,6 @@ const { Server } = require("socket.io");
 const io = new Server(server);
 const {Pool,Client} = require('pg')
 const cors = require('cors');
-
 // Sayfalandırma yaptığımız kısım (başlangıç)
 
 app.get("/", (req, res) => {
@@ -36,6 +35,7 @@ pool.connect(function(err){
 })
 
 // Veritabanı bağlantısı (Bitiş)
+
 
 
 
