@@ -10,46 +10,6 @@
 </head>
 <body>
 
-<script>
-
-    const {Builder, By, Key, until} = require('selenium-webdriver');
-
-    (async function example() {
-        let driver = await new Builder().forBrowser('firefox').build();
-        try {
-            await driver.get('https://gamesatis.com/knight-online-goldbar');
-            const goldbarContainer = await driver.findElement(By.className('goldbar-container')).getAttribute("innerHTML");
-            console.log(goldbarContainer);
-        } finally {
-            await driver.quit();
-        }
-    })();
-
-    //GAMESATIŞ FETCH
-    fetch('https://api.allorigins.win/raw?url=https://www.gamesatis.com/knight-online-goldbar')
-        .then(response => response.text())
-        .then(html => {
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, "text/html");
-            const goldbarContainer = doc.querySelector('.goldbar-container');
-            const priceDivs = goldbarContainer.querySelectorAll('.goldbar-row-price');
-            let buyPrice;
-            let sellPrice;
-            let name;
-            let prices = [];
-            for (let i = 0; i < priceDivs.length; i += 2) {
-                buyPrice = priceDivs[i].textContent.match(/\d+(\.\d+)?/g).join('.');
-                sellPrice = priceDivs[i + 1].textContent.match(/\d+(\.\d+)?/g).join('.');
-                name = priceDivs[i].parentNode.querySelector('.goldbar-row-name').textContent.split(" ")[0].replace('\n','').toLowerCase();
-                prices.push({buy:buyPrice, sell:sellPrice, name:name})
-            }
-            const socket = io.connect('http://localhost:3000');
-            socket.emit('gameSatisPrices',prices);
-        });
-
-
-
-</script>
 
 <script>
     //KLASGAME FETCH

@@ -6,6 +6,54 @@ const { Server } = require("socket.io");
 const io = new Server(server);
 const {Pool,Client} = require('pg')
 const cors = require('cors');
+const puppeteer = require('puppeteer-extra')
+const StealthPlugin = require('puppeteer-extra-plugin-stealth')
+const {executablePath} = require('puppeteer')
+
+puppeteer.use(StealthPlugin());
+(async () => {
+
+    // Launch sequence
+    puppeteer.use(StealthPlugin())
+    const browser = await puppeteer.launch({
+        args: ['--no-sandbox',],
+        headless: false,
+        ignoreHTTPSErrors: true,
+
+        // add this
+        executablePath: executablePath(),
+    })
+
+    const page = await browser.newPage()
+    await page.setViewport({
+        width: 1920,
+        height: 1280,
+        deviceScaleFactor: 1,
+    });
+
+    await page.goto('https://www.gamesatis.com/knight-online-goldbar');
+
+    // Select the element with class 'goldbar-row-price'
+    const container = await page.waitForSelector('.goldbar-container');
+    // Extract the text content of the element
+    const prices = await container.$$('.goldbar-row-price');
+    const name = await container.$$('.goldbar-row-name')
+    for (let i = 0; i < name.length; i++) {
+        const buyPrice = await page.evaluate(price => price.textContent.match(/\d+(\.\d+)?/g).join('.'), prices[i * 2]);
+        const sellPrice = await page.evaluate(price => price.textContent.match(/\d+(\.\d+)?/g).join('.'), prices[i * 2 + 1]);
+
+        console.log(buyPrice, sellPrice);
+
+
+        const sql = 'UPDATE prices SET buy_price = $1, sell_price = $2 WHERE server_id = $3 AND (site_id= 1)';
+        await pool.query(sql, [buyPrice,sellPrice, i+1]);
+
+    }
+
+
+
+    await browser.close();
+})();
 // Sayfalandırma yaptığımız kısım (başlangıç)
 
 app.get("/", (req, res) => {
@@ -42,25 +90,11 @@ pool.connect(function(err){
 // Prices verilerinin update edildiği bölüm (başlangıç)
 io.on("connection", async (socket) => {
 
-    //Bu bölümde GameSatış'tan gelen fiyat ve server isimleri yakalanıyor ve veri tabanında güncelleniyor.
-        socket.on("gameSatisPrices", async (data) => {
-        for (let i = 0; i < data.length; i++) {
-            const queryText = `UPDATE prices SET buy_price = $1, sell_price = $2 WHERE server_id = $3 AND (site_id= 1)`;
-            const values = [data[i].buy, data[i].sell, i + 1];
-            try {
-                const res = await pool.query(queryText, values);
-            } catch (err) {
-                console.log(err.stack);
-            }
-        }
-
-        console.log(`GameSatış'tan gelen goldbar fiyatları güncellendi`);
-        console.log(`Sunucu isimleri güncellendi`);
-    });
-
     //GameSatış'a ait fiyatlar çekilip, anasayfaya gönderiliyor.
-    const resGms = await pool.query("SELECT * FROM prices WHERE site_id = 1");
+    const resGms = await pool.query("SELECT * FROM prices WHERE site_id = 1 ORDER BY server_id ASC");
     socket.emit("GameSatisData", resGms.rows);
+    console.log(resGms.rows)
+
 
     //Sunucu isimleri çekiliyor.
     const sunucuID = await pool.query("SELECT prices.server_id, servers.name FROM prices JOIN servers ON prices.server_id = servers.server_id WHERE site_id = 1 ORDER BY servers.server_id ASC ;")
@@ -164,7 +198,6 @@ io.on("connection", async (socket) => {
 
 
         socket.on("bursaGbPrices", async (data) => {
-            console.log(data)
             for (let i = 0; i < data.length; i++) {
                 const queryText = `UPDATE prices SET buy_price = $1, sell_price =$2 WHERE server_id= (SELECT server_id FROM servers WHERE name = $3) AND (site_id= 8)`;
                 const values = [data[i].bursaGbBuy, data[i].bursaGbSell, data[i].bursaGbName];
@@ -181,7 +214,6 @@ io.on("connection", async (socket) => {
 
 
     socket.on("oyunForPrices", async (data) => {
-        console.log(data)
         for (let i = 0; i < data.length; i++) {
             const queryText = `UPDATE prices SET buy_price = $1, sell_price =$2 WHERE server_id= (SELECT server_id FROM servers WHERE name = $3) AND (site_id= 9)`;
             const values = [data[i].oyunForGbBuy, data[i].oyunForGbSell, data[i].oyunForServerName];
