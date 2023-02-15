@@ -10,6 +10,12 @@
 </head>
 <body id="container">
 
+<script>
+    setTimeout(function() {
+        location.reload();
+    }, 36000);
+</script>
+
 <style>
     #container{
         background-image: url("https://i.imgur.com/YR5wWd6.png");
@@ -30,6 +36,7 @@
     #data-table th, #data-table td {
         border: 1px solid black;
         padding: 8px;
+        width: 60px;
     }
     #top-navigation a{
         width: 150px;
@@ -39,6 +46,7 @@
         font-weight: 500;
         color:#FFF;
     }
+
     #top-navigation a:hover{
         background-color: #FFF;
         color:#000;
@@ -75,84 +83,67 @@
 
 
 
-<div class="row" style="width: 1640px; margin:30px auto;">
-    <div class="col-sm-6">
-        <img src="https://img.gamesatis.com/editor-files/knight-online-gold-bar-343.jpeg" width="650" style="float: left">
+<div class="row align-items-center" style="width: 1640px; margin:30px auto;">
+    <div class="col-sm-4">
+        <img src="https://img.gamesatis.com/editor-files/knight-online-gold-bar-343.jpeg" style="max-width: 520px; float: left">
     </div>
-    <div class="col-sm-6">
-        <img src="https://img.gamesatis.com/editor-files/knight-online-gold-bar-343.jpeg" width="650" height="80" style="float: right">
+    <div class="col-sm-4">
+        <img src="https://img.gamesatis.com/editor-files/knight-online-cash-6511.jpg" style="max-width: 520px">
+    </div>
+    <div class="col-sm-4">
+        <img src="https://img.gamesatis.com/editor-files/knight-online-gold-bar-343.jpeg" style="max-width: 520px; float: right">
     </div>
 </div>
 
 
-<table class="text-center table table-bordered" id="data-table">
-    <tbody>
+<table class="text-center table-dark" id="data-table">
+        <th colspan="1" rowspan="3"><p>Server</p><p>Site</p></th>
+        <tr id="servername" style="color: aqua; font-weight: bold; vertical-align: middle"></tr>
+
     <tr style="vertical-align: middle;">
-        <td colspan="3" rowspan="3"><p>Server</p><p>Site</p></td>
+    <th>Satış</th>
+    <th>Alış</th>
+    <th>Satış</th>
+    <th>Alış</th>
+    <th>Satış</th>
+    <th>Alış</th>
+    <th>Satış</th>
+    <th>Alış</th>
+    <th>Satış</th>
+    <th>Alış</th>
+    <th>Satış</th>
+    <th>Alış</th>
+    <th>Satış</th>
+    <th>Alış</th>
+    <th>Satış</th>
+    <th>Alış</th>
+    <th>Satış</th>
+    <th>Alış</th>
+    <th>Satış</th>
+    <th>Alış</th>
+    <th>Satış</th>
+    <th>Alış</th>
+    <th>Satış</th>
+    <th>Alış</th>
     </tr>
 
-    <tr id="servername" style="color: aqua; font-weight: bold; vertical-align: middle">
+    </tr>
+    <tbody id="a1"></tbody>
 
-    </tr>
-    <tr style="vertical-align: middle; ">
-        <th>Alış</th>
-        <th>Satış</th>
-        <th>Alış</th>
-        <th>Satış</th>
-        <th>Alış</th>
-        <th>Satış</th>
-        <th>Alış</th>
-        <th>Satış</th>
-        <th>Alış</th>
-        <th>Satış</th>
-        <th>Alış</th>
-        <th>Satış</th>
-        <th>Alış</th>
-        <th>Satış</th>
-        <th>Alış</th>
-        <th>Satış</th>
-        <th>Alış</th>
-        <th>Satış</th>
-        <th>Alış</th>
-        <th>Satış</th>
-        <th>Alış</th>
-        <th>Satış</th>
-        <th>Alış</th>
-        <th>Satış</th>
-        <th>Alış</th>
-        <th>Satış</th>
-    </tr>
-    <tr id="data-display" style="height: 60px; vertical-align: middle;">
-        <td colspan="3" rowspan="1"><img src="https://images.gamesatis.com/assets/logo-light.svg" width="110px"></td>
-    </tr>
-    <tr id="data-display2" style="height: 60px; vertical-align: middle;">
-        <td colspan="3" rowspan="1"><img src="https://www.klasgame.com/theme/klasgame2020/image/logo.png" width="110px"></td>
-    </tr>
-    <tr id="data-display3" style="height: 60px; vertical-align: middle;">
-        <td colspan="3" rowspan="1"><img src="https://oyuneks.com/public/front/site/oyuneks-1-1630332428.png" width="110px"></td>
-    </tr>
-    <tr id="data-display4" style="height: 60px; vertical-align: middle;">
-        <td colspan="3" rowspan="1"><img src="https://www.vatangame.com/public/vatangame-ikinci-yil.png" width="110px"></td>
-    </tr>
-    <tr id="data-display5" style="height: 60px; vertical-align: middle;">
-        <td colspan="3" rowspan="1"><img src="https://cdn.bynogame.com/UX-new/bynogame-footer-logo/png/bynogame-footer-logo.png" width="110px"></td>
-    </tr>
-    <tr id="data-display6" style="height: 60px; vertical-align: middle;">
-        <td colspan="3" rowspan="1"><img src="https://www.kopazar.com/images/kopazar-logo-white.png" width="110px"></td>
-    </tr>
-    <tr id="data-display7" style="height: 60px; vertical-align: middle;">
-        <td colspan="3" rowspan="1"><img src="https://www.kabasakalonline.com/theme/default/assets/img/logo.png?v=0.1" width="110px"></td>
-    </tr>
-    <tr id="data-display8" style="height: 60px; vertical-align: middle;">
-        <td colspan="3" rowspan="1"><img src="https://www.bursagb.com/new/img/fixed-logo.webp" width="110px"></td>
-    </tr>
-    <tr id="data-display9" style="height: 60px; vertical-align: middle;">
-        <td colspan="3" rowspan="1"><img src="https://cdn-eu.oyunfor.com/Public/standart/web/dist/img/logo.png?v1" width="110px"></td>
-    </tr>
-    </tbody>
 </table>
+
+
 <script>
+
+</script>
+
+
+<script>
+
+
+
     const socket = io.connect("http://localhost:3000");
+
     socket.on("GameSatisData", (data) => {
         data.forEach((element) => {
             // create a new HTML element to display the data
@@ -169,139 +160,90 @@
         });
     });
 
-    socket.on("KlasGameData", (data) => {
-        data.forEach((element) => {
-            // create a new HTML element to display the data
-            const newBuyElement = document.createElement("td");
-            newBuyElement.innerHTML = element.buy_price;
-            // append the element to the existing HTML
-            document.getElementById("data-display2").appendChild(newBuyElement);
+    const siteIsimleri = {
+        1: "https://images.gamesatis.com/assets/logo-light.svg",
+        2: "https://www.klasgame.com/theme/klasgame2020/image/logo.png",
+        3: "https://oyuneks.com/public/front/site/oyuneks-1-1630332428.png",
+        4: "https://www.vatangame.com/public/vatangame-ikinci-yil.png",
+        5: "https://cdn.bynogame.com/UX-new/bynogame-footer-logo/png/bynogame-footer-logo.png",
+        6: "https://www.kopazar.com/images/kopazar-logo-white.png",
+        7: "https://www.kabasakalonline.com/theme/default/assets/img/logo.png?v=0.1",
+        8: "https://www.bursagb.com/new/img/fixed-logo.webp",
+        9: "https://cdn-eu.oyunfor.com/Public/standart/web/dist/img/logo.png?v1",
+// ...
+    };
+    let dataID1 = [];
 
-            // create new HTML element for sell_price
-            const newSellElement = document.createElement("td");
-            newSellElement.innerHTML = element.sell_price;
-            // append the element to the existing HTML
-            document.getElementById("data-display2").appendChild(newSellElement)
-
+    socket.on("allData", veriler => {
+        veriler.forEach(veri => {
+            console.log(veriler)
+            if (veri.server_id === 1) {
+                    $("#a1").append(`<tr style="height: 60px; vertical-align: middle;"><td><img src="${siteIsimleri[veri.site_id]}" width="110px"></td><td class="zeroSell">${veri.sell_price}</td><td class="zeroBuy">${veri.buy_price}</td></tr>`);
+            } else if (veri.server_id === 2) {
+                $("#a1 tr:last-child td:last-child").after(`<td class="felisSell" style="background-color:#272d38;">${veri.sell_price}</td><<td class="felisBuy" style="background-color:#272d38;">${veri.buy_price}</td>`);
+            } else if (veri.server_id === 3) {
+                $("#a1 tr:last-child td:last-child").after(`<td class="pandoraSell">${veri.sell_price}</td><td class="pandoraBuy">${veri.buy_price}</td>`);
+            } else if (veri.server_id === 4) {
+                $("#a1 tr:last-child td:last-child").after(`<td class="agarthaSell" style="background-color:#272d38;">${veri.sell_price}</td><td class="agarthaBuy" style="background-color:#272d38;">${veri.buy_price}</td>`);
+            } else if (veri.server_id === 5) {
+                $("#a1 tr:last-child td:last-child").after(`<td class="siriusSell">${veri.sell_price}</td><td class="siriusBuy">${veri.buy_price}</td>`);
+            } else if (veri.server_id === 6) {
+                $("#a1 tr:last-child td:last-child").after(`<td class="altarSell" style="background-color:#272d38;">${veri.sell_price}</td><td class="altarBuy" style="background-color:#272d38;">${veri.buy_price}</td>`);
+            } else if (veri.server_id === 7) {
+                $("#a1 tr:last-child td:last-child").after(`<td class="vegaSell">${veri.sell_price}</td><td class="vegaBuy">${veri.buy_price}</td>`);
+            } else if (veri.server_id === 8) {
+                $("#a1 tr:last-child td:last-child").after(`<td class="minarkSell" style="background-color:#272d38;">${veri.sell_price}</td><td class="minarkBuy" style="background-color:#272d38;">${veri.buy_price}</td>`);
+            } else if (veri.server_id === 9) {
+                $("#a1 tr:last-child td:last-child").after(`<td class="destanSell">${veri.sell_price}</td><td class="destanBuy">${veri.buy_price}</td>`);
+            } else if (veri.server_id === 10) {
+                $("#a1 tr:last-child td:last-child").after(`<td class="diezSell" style="background-color:#272d38;">${veri.sell_price}</td><td class="diezBuy" style="background-color:#272d38;">${veri.buy_price}</td>`);
+            } else if (veri.server_id === 11) {
+                $("#a1 tr:last-child td:last-child").after(`<td class="aresSell">${veri.sell_price}</td><td class="aresBuy">${veri.buy_price}</td>`);
+            } else if (veri.server_id === 12) {
+                $("#a1 tr:last-child td:last-child").after(`<td class="gordionSell" style="background-color:#272d38;">${veri.sell_price}</td><td class="gordionBuy" style="background-color:#272d38;">${veri.buy_price}</td>`);
+            }
         });
-    });
+        function highlightMaxBuy(tableClass) {
+            const buyTDs = $(`.${tableClass}`);
+            let maxBuy = 0;
+            buyTDs.each(function() {
+                const buy = parseFloat($(this).text());
+                if (buy > maxBuy) {
+                    maxBuy = buy;
+                }
+            });
+            const maxBuyTD = buyTDs.filter(function() {
+                return parseFloat($(this).text()) === maxBuy;
+            });
+            maxBuyTD.css('background-color', 'green');
+        }
 
-    socket.on("oyunEksData", (data) => {
-        data.forEach((element) => {
-            // create a new HTML element to display the data
-            const newBuyElement = document.createElement("td");
-            newBuyElement.innerHTML = element.buy_price;
-            // append the element to the existing HTML
-            document.getElementById("data-display3").appendChild(newBuyElement);
+        function minSell(tableClass) {
+            const sellTDs = $(`.${tableClass}`);
+            let minSell = Number.MAX_SAFE_INTEGER;
+            sellTDs.each(function() {
+                const sell = parseFloat($(this).text());
+                if (sell < minSell) {
+                    minSell = sell;
+                }
+            });
+            const minSellTD = sellTDs.filter(function() {
+                return parseFloat($(this).text()) === minSell;
+            });
+            minSellTD.css('background-color', 'red');
+        }
 
-            // create new HTML element for sell_price
-            const newSellElement = document.createElement("td");
-            newSellElement.innerHTML = element.sell_price;
-            // append the element to the existing HTML
-            document.getElementById("data-display3").appendChild(newSellElement)
 
-        });
-    });
-
-    socket.on("vatanGameData", (data) => {
-        data.forEach((element) => {
-            // create a new HTML element to display the data
-            const newBuyElement = document.createElement("td");
-            newBuyElement.innerHTML = element.buy_price;
-            // append the element to the existing HTML
-            document.getElementById("data-display4").appendChild(newBuyElement);
-
-            // create new HTML element for sell_price
-            const newSellElement = document.createElement("td");
-            newSellElement.innerHTML = element.sell_price;
-            // append the element to the existing HTML
-            document.getElementById("data-display4").appendChild(newSellElement)
-        });
-
-    });
-
-    socket.on("bynoGameData", (data) => {
-        data.forEach((element) => {
-            // create a new HTML element to display the data
-            const newBuyElement = document.createElement("td");
-            newBuyElement.innerHTML = element.buy_price;
-            // append the element to the existing HTML
-            document.getElementById("data-display5").appendChild(newBuyElement);
-
-            // create new HTML element for sell_price
-            const newSellElement = document.createElement("td");
-            newSellElement.innerHTML = element.sell_price;
-            // append the element to the existing HTML
-            document.getElementById("data-display5").appendChild(newSellElement)
-        });
-
-    });
-
-    socket.on("koPazarData", (data) => {
-        data.forEach((element) => {
-            // create a new HTML element to display the data
-            const newBuyElement = document.createElement("td");
-            newBuyElement.innerHTML = element.buy_price;
-            // append the element to the existing HTML
-            document.getElementById("data-display6").appendChild(newBuyElement);
-
-            // create new HTML element for sell_price
-            const newSellElement = document.createElement("td");
-            newSellElement.innerHTML = element.sell_price;
-            // append the element to the existing HTML
-            document.getElementById("data-display6").appendChild(newSellElement)
+        const buy = ['zeroBuy', 'felisBuy', 'pandoraBuy', 'agarthaBuy', 'siriusBuy', 'altarBuy', 'vegaBuy', 'minarkBuy', 'destanBuy', 'diezBuy', 'aresBuy', 'gordionBuy'];
+        const sell = ['zeroSell', 'felisSell', 'pandoraSell', 'agarthaSell', 'siriusSell', 'altarSell', 'vegaSell', 'minarkSell', 'destanSell', 'diezSell', 'aresSell', 'gordionSell'];
+        buy.forEach(function(buy) {
+            highlightMaxBuy(buy);
         });
 
-    });
+        sell.forEach(function(sell){
+            minSell(sell);
+        })
 
-    socket.on("kabasakalData", (data) => {
-        data.forEach((element) => {
-            // create a new HTML element to display the data
-            const newBuyElement = document.createElement("td");
-            newBuyElement.innerHTML = element.buy_price;
-            // append the element to the existing HTML
-            document.getElementById("data-display7").appendChild(newBuyElement);
-
-            // create new HTML element for sell_price
-            const newSellElement = document.createElement("td");
-            newSellElement.innerHTML = element.sell_price;
-            // append the element to the existing HTML
-            document.getElementById("data-display7").appendChild(newSellElement)
-        });
-
-    });
-
-    socket.on("BursaGbData", (data) => {
-        data.forEach((element) => {
-            // create a new HTML element to display the data
-            const newBuyElement = document.createElement("td");
-            newBuyElement.innerHTML = element.buy_price;
-            // append the element to the existing HTML
-            document.getElementById("data-display8").appendChild(newBuyElement);
-
-            // create new HTML element for sell_price
-            const newSellElement = document.createElement("td");
-            newSellElement.innerHTML = element.sell_price;
-            // append the element to the existing HTML
-            document.getElementById("data-display8").appendChild(newSellElement)
-        });
-
-    });
-
-    socket.on("oyunForData", (data) => {
-        data.forEach((element) => {
-            // create a new HTML element to display the data
-            const newBuyElement = document.createElement("td");
-            newBuyElement.innerHTML = element.buy_price;
-            // append the element to the existing HTML
-            document.getElementById("data-display9").appendChild(newBuyElement);
-
-            // create new HTML element for sell_price
-            const newSellElement = document.createElement("td");
-            newSellElement.innerHTML = element.sell_price;
-            // append the element to the existing HTML
-            document.getElementById("data-display9").appendChild(newSellElement)
-        });
 
     });
 
@@ -315,7 +257,6 @@
             document.getElementById("servername").appendChild(svname);
         });
     });
-
 
 </script>
 

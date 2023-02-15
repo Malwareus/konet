@@ -40,6 +40,8 @@ app.get('/test', async (req, res) => {
         height: 1280,
         deviceScaleFactor: 1,
     });
+try {
+
 
     // GAMESATIŞ VERİ (BAŞLANGIÇ)
     await page.goto('https://www.gamesatis.com/knight-online-goldbar');
@@ -50,7 +52,7 @@ app.get('/test', async (req, res) => {
         const buyPrice = await page.evaluate(price => price.textContent.match(/\d+(\.\d+)?/g).join('.'), gmsPrices[i * 2]);
         const sellPrice = await page.evaluate(price => price.textContent.match(/\d+(\.\d+)?/g).join('.'), gmsPrices[i * 2 + 1]);
         const sql = 'UPDATE prices SET buy_price = $1, sell_price = $2 WHERE server_id = $3 AND (site_id= 1)';
-        await pool.query(sql, [buyPrice,sellPrice, i+1]);
+        await pool.query(sql, [buyPrice, sellPrice, i + 1]);
     }
     // GAMESATIŞ VERİ (BİTİŞ)
 
@@ -63,12 +65,16 @@ app.get('/test', async (req, res) => {
     const klasSell = await klasContainer.$$('.product-button-area');
     const klasNameCek = await klasContainer.$$('.product-title[data-type="object-name"]');
     for (let i = 0; i < klasNameCek.length; i++) {
-        const priceDuzelt = await page.evaluate( klasNameCek => klasNameCek.textContent.split(" ").pop().replace("M",""), klasNameCek[i]);
+        const priceDuzelt = await page.evaluate(klasNameCek => klasNameCek.textContent.split(" ").pop().replace("M", ""), klasNameCek[i]);
         const klasBuyPrices = parseFloat(await page.evaluate(klasBuy => klasBuy.textContent.match(/\d+(\.\d+)?/g).join('.'), klasBuy[i])) * parseFloat(priceDuzelt);
         const klasSellPrices = parseFloat(await page.evaluate(klasSell => klasSell.textContent.match(/\d+(\.\d+)?/g).join('.'), klasSell[i])) * parseFloat(priceDuzelt);
-        const klasName = await page.evaluate( klasNameCek => klasNameCek.textContent.split(" ")[0].replace('\n','').toUpperCase(), klasNameCek[i])
+        const klasName = await page.evaluate(klasNameCek => klasNameCek.textContent.split(" ")[0].replace('\n', '').toUpperCase(), klasNameCek[i])
         console.log(klasBuyPrices, klasSellPrices)
-        const sql = `UPDATE prices SET buy_price = $1, sell_price = $2 WHERE server_id = (SELECT server_id FROM servers WHERE name = $3) AND (site_id= 2)`;
+        const sql = `UPDATE prices
+                     SET buy_price  = $1,
+                         sell_price = $2
+                     WHERE server_id = (SELECT server_id FROM servers WHERE name = $3)
+                       AND (site_id = 2)`;
         await pool.query(sql, [klasBuyPrices, klasSellPrices, klasName])
     }
     // KLASGAME VERİ (BİTİŞ)
@@ -84,11 +90,15 @@ app.get('/test', async (req, res) => {
     const oyunEksNameCek = await oyunEksContainer.$$('.item-col-center h5');
     const oyunEksNameFind = await oyunEksContainer.$$('.heading-secondary');
     for (let i = 0; i < oyunEksBuy.length; i++) {
-        const priceDuzelt = await page.evaluate(oyunEksNameFind => oyunEksNameFind.textContent.split(" ").pop().replace("m"," "), oyunEksNameFind[i]);
-        const oyunEksBuyPrices = parseFloat(await page.evaluate(oyunEksBuy => oyunEksBuy.textContent.replace(/\n/g, "").replace(/[^0-9,]/g, "").replace(',','.'), oyunEksBuy[i])) * parseFloat(priceDuzelt);
-        const oyunEksSellPrices = parseFloat(await page.evaluate(oyunEksSell => oyunEksSell.textContent.replace(/\n/g, "").replace(/[^0-9,]/g, "").replace(',','.'), oyunEksSell[i])) * parseFloat(priceDuzelt);
-        const oyunEksName = await page.evaluate( oyunEksNameCek => oyunEksNameCek.textContent.split(" ")[2].toUpperCase(), oyunEksNameCek[i])
-        const sql = `UPDATE prices SET buy_price = $1, sell_price = $2 WHERE server_id = (SELECT server_id FROM servers WHERE name = $3) AND (site_id= 3)`;
+        const priceDuzelt = await page.evaluate(oyunEksNameFind => oyunEksNameFind.textContent.split(" ").pop().replace("m", " "), oyunEksNameFind[i]);
+        const oyunEksBuyPrices = parseFloat(await page.evaluate(oyunEksBuy => oyunEksBuy.textContent.replace(/\n/g, "").replace(/[^0-9,]/g, "").replace(',', '.'), oyunEksBuy[i])) * parseFloat(priceDuzelt);
+        const oyunEksSellPrices = parseFloat(await page.evaluate(oyunEksSell => oyunEksSell.textContent.replace(/\n/g, "").replace(/[^0-9,]/g, "").replace(',', '.'), oyunEksSell[i])) * parseFloat(priceDuzelt);
+        const oyunEksName = await page.evaluate(oyunEksNameCek => oyunEksNameCek.textContent.split(" ")[2].toUpperCase(), oyunEksNameCek[i])
+        const sql = `UPDATE prices
+                     SET buy_price  = $1,
+                         sell_price = $2
+                     WHERE server_id = (SELECT server_id FROM servers WHERE name = $3)
+                       AND (site_id = 3)`;
         await pool.query(sql, [oyunEksBuyPrices, oyunEksSellPrices, oyunEksName])
     }
 
@@ -97,19 +107,27 @@ app.get('/test', async (req, res) => {
     // ----- //
 
     // VATANGAME VERİ (BAŞLANGIÇ)
-
+    try {
     await page.goto('https://www.vatangame.com/oyun-parasi/knight-online-gold-bar');
     const vatanGameContainer = await page.waitForSelector('.gm-products');
     const vatanGameBuy = await vatanGameContainer.$$('span.d-block.gm-product-price');
     const vatanGameSell = await vatanGameContainer.$$('.gm-product-price.mt-4.mt-lg-0.align-self-center.w-50');
     const vatanGameNameCek = await vatanGameContainer.$$('.gm-product-caption');
     for (let i = 0; i < vatanGameBuy.length; i++) {
-        const priceDuzelt = await page.evaluate( vatanGameNameCek => vatanGameNameCek.textContent.split(" ")[3], vatanGameNameCek[i])
+        const priceDuzelt = await page.evaluate(vatanGameNameCek => vatanGameNameCek.textContent.split(" ")[3], vatanGameNameCek[i])
         const vatanGameBuyPrices = parseFloat(await page.evaluate(vatanGameBuy => vatanGameBuy.innerHTML.match(/<b>(.*?)<\/b>/)[1].replace(" TL", ""), vatanGameBuy[i])) * parseFloat(priceDuzelt);
         const vatanGameSellPrices = parseFloat(await page.evaluate(vatanGameSell => vatanGameSell.innerHTML.replace(" TL", ""), vatanGameSell[i])) * parseFloat(priceDuzelt);
-        const vatanGameName = await page.evaluate( vatanGameNameCek => vatanGameNameCek.textContent.split(" ")[2].toUpperCase().replace(/İ/g, "I"), vatanGameNameCek[i])
-        const sql = `UPDATE prices SET buy_price = $1, sell_price = $2 WHERE server_id = (SELECT server_id FROM servers WHERE name = $3) AND (site_id= 4)`;
+        const vatanGameName = await page.evaluate(vatanGameNameCek => vatanGameNameCek.textContent.split(" ")[2].toUpperCase().replace(/İ/g, "I").replace("MINARK","MİNARK"), vatanGameNameCek[i])
+        const sql = `UPDATE prices
+                     SET buy_price  = $1,
+                         sell_price = $2
+                     WHERE server_id = (SELECT server_id FROM servers WHERE name = $3)
+                       AND (site_id = 4)`;
         await pool.query(sql, [vatanGameBuyPrices, vatanGameSellPrices, vatanGameName])
+        console.log(vatanGameBuyPrices, vatanGameSellPrices, vatanGameName)
+    }
+    } catch (error) {
+        console.error(error);
     }
 
     // VATANGAME VERİ (BİTİŞ)
@@ -124,10 +142,14 @@ app.get('/test', async (req, res) => {
     const bynoGameBuy = await bynoGameContainer.$$("form[action='/tr/satis-onay'] button[type='submit']");
     const bynoGameNameCek = await bynoGameContainer.$$('h2.font-weight-bolder.text-left');
     for (let i = 0; i < bynoGameBuy.length; i++) {
-        const bynoGameBuyPrices = await page.evaluate(bynoGameBuy => bynoGameBuy.innerText.split(" ")[0].replace(",","."), bynoGameBuy[i]);
-        const bynoGameSellPrices = await page.evaluate(bynoGameSell => bynoGameSell.textContent.split(" ")[0].replace(",","."), bynoGameSell[i]);
-        const bynoGameName = await page.evaluate( bynoGameNameCek => bynoGameNameCek.innerText.split(" ")[2].toUpperCase(), bynoGameNameCek[i])
-        const sql = `UPDATE prices SET buy_price = $1, sell_price = $2 WHERE server_id = (SELECT server_id FROM servers WHERE name = $3) AND (site_id= 5)`;
+        const bynoGameBuyPrices = await page.evaluate(bynoGameBuy => bynoGameBuy.innerText.split(" ")[0].replace(",", "."), bynoGameBuy[i]);
+        const bynoGameSellPrices = await page.evaluate(bynoGameSell => bynoGameSell.textContent.split(" ")[0].replace(",", ".").replace("TRYTL", ""), bynoGameSell[i]);
+        const bynoGameName = await page.evaluate(bynoGameNameCek => bynoGameNameCek.innerText.split(" ")[2].toUpperCase(), bynoGameNameCek[i])
+        const sql = `UPDATE prices
+                     SET buy_price  = $1,
+                         sell_price = $2
+                     WHERE server_id = (SELECT server_id FROM servers WHERE name = $3)
+                       AND (site_id = 5)`;
         await pool.query(sql, [bynoGameBuyPrices, bynoGameSellPrices, bynoGameName])
     }
 
@@ -145,9 +167,13 @@ app.get('/test', async (req, res) => {
     for (let i = 0; i < koPazarBuy.length; i++) {
         const koPazarBuyPrices = await page.evaluate(koPazarBuy => koPazarBuy.textContent.match(/\d+(\.\d+)?/g), koPazarBuy[i]) * 10;
         const koPazarSellPrices = await page.evaluate(koPazarSell => koPazarSell.textContent.match(/\d+(\.\d+)?/g), koPazarSell[i]) * 10;
-        const koPazarName = await page.evaluate( koPazarNameCek => koPazarNameCek.textContent.split(" ")[0].toUpperCase(), koPazarNameCek[i])
+        const koPazarName = await page.evaluate(koPazarNameCek => koPazarNameCek.textContent.split(" ")[0].toUpperCase(), koPazarNameCek[i])
 
-        const sql = `UPDATE prices SET buy_price = $1, sell_price = $2 WHERE server_id = (SELECT server_id FROM servers WHERE name = $3) AND (site_id= 6)`;
+        const sql = `UPDATE prices
+                     SET buy_price  = $1,
+                         sell_price = $2
+                     WHERE server_id = (SELECT server_id FROM servers WHERE name = $3)
+                       AND (site_id = 6)`;
         await pool.query(sql, [koPazarBuyPrices, koPazarSellPrices, koPazarName])
     }
 
@@ -163,12 +189,16 @@ app.get('/test', async (req, res) => {
     const kabasakalOnlineBuy = await kabasakalOnline.$$("span[data-type=\"price\"]");
     const kabasakalOnlineName = await kabasakalOnline.$$('h2.name');
     for (let i = 0; i < kabasakalOnlineBuy.length; i++) {
-        const priceDuzelt = await page.evaluate( kabasakalOnlineName => kabasakalOnlineName.textContent.match(/\d+(\.\d+)?/)[0], kabasakalOnlineName[i])
-        const ksoBuyPrices = parseFloat(await page.evaluate(kabasakalOnlineBuy => kabasakalOnlineBuy.textContent.replace(",","."), kabasakalOnlineBuy[i])) * parseFloat(priceDuzelt);
-        const ksoSellPrices = parseFloat(await page.evaluate(kabasakalOnlineSell => kabasakalOnlineSell.textContent.split(" ")[2].replace(",","."), kabasakalOnlineSell[i])) * parseFloat(priceDuzelt);
-        const ksoName = await page.evaluate( kabasakalOnlineName => kabasakalOnlineName.textContent.split(" ")[0].toUpperCase(), kabasakalOnlineName[i])
+        const priceDuzelt = await page.evaluate(kabasakalOnlineName => kabasakalOnlineName.textContent.match(/\d+(\.\d+)?/)[0], kabasakalOnlineName[i])
+        const ksoBuyPrices = parseFloat(await page.evaluate(kabasakalOnlineBuy => kabasakalOnlineBuy.textContent.replace(",", "."), kabasakalOnlineBuy[i])) * parseFloat(priceDuzelt);
+        const ksoSellPrices = parseFloat(await page.evaluate(kabasakalOnlineSell => kabasakalOnlineSell.textContent.split(" ")[2].replace(",", "."), kabasakalOnlineSell[i])) * parseFloat(priceDuzelt);
+        const ksoName = await page.evaluate(kabasakalOnlineName => kabasakalOnlineName.textContent.split(" ")[0].toUpperCase(), kabasakalOnlineName[i])
 
-        const sql = `UPDATE prices SET buy_price = $1, sell_price = $2 WHERE server_id = (SELECT server_id FROM servers WHERE name = $3) AND (site_id= 7)`;
+        const sql = `UPDATE prices
+                     SET buy_price  = $1,
+                         sell_price = $2
+                     WHERE server_id = (SELECT server_id FROM servers WHERE name = $3)
+                       AND (site_id = 7)`;
         await pool.query(sql, [ksoBuyPrices, ksoSellPrices, ksoName])
     }
 
@@ -184,12 +214,16 @@ app.get('/test', async (req, res) => {
     const bursaGbSell = await bursaGbContainer.$$('.ps-product__price.text-right');
     const bursaGbNameCek = await bursaGbContainer.$$('.ps-product__title a');
     for (let i = 0; i < bursaGbBuy.length; i++) {
-        const priceDuzelt = await page.evaluate( bursaGbNameCek => bursaGbNameCek.textContent.split(" ")[1].toUpperCase().replace("M",""), bursaGbNameCek[i])
-        const bursaGbBuyPrices = parseFloat(await page.evaluate(bursaGbBuy => bursaGbBuy.textContent.split(" (")[1].split(")")[0], bursaGbBuy[i])) * parseFloat(priceDuzelt);
-        const bursaGbSellPrices = parseFloat(await page.evaluate(bursaGbSell => bursaGbSell.textContent.replace(" TL","").replace(",","."), bursaGbSell[i])) * parseFloat(priceDuzelt);
-        const bursaGbName = await page.evaluate( bursaGbNameCek => bursaGbNameCek.innerHTML.split(" ")[0].toUpperCase(), bursaGbNameCek[i])
+        const priceDuzelt = await page.evaluate(bursaGbNameCek => bursaGbNameCek.textContent.split(" ")[1].toUpperCase().replace("M", ""), bursaGbNameCek[i])
+        const bursaGbBuyPrices = parseFloat((await page.evaluate(bursaGbBuy => bursaGbBuy.textContent.split(" (")[1].split(")")[0], bursaGbBuy[i])) * parseFloat(priceDuzelt)).toFixed(2);
+        const bursaGbSellPrices = parseFloat(await page.evaluate(bursaGbSell => bursaGbSell.textContent.replace(" TL", "").replace(",", "."), bursaGbSell[i])) * parseFloat(priceDuzelt).toFixed(2);
+        const bursaGbName = await page.evaluate(bursaGbNameCek => bursaGbNameCek.innerHTML.split(" ")[0].toUpperCase(), bursaGbNameCek[i])
 
-        const sql = `UPDATE prices SET buy_price = $1, sell_price = $2 WHERE server_id = (SELECT server_id FROM servers WHERE name = $3) AND (site_id= 8)`;
+        const sql = `UPDATE prices
+                     SET buy_price  = $1,
+                         sell_price = $2
+                     WHERE server_id = (SELECT server_id FROM servers WHERE name = $3)
+                       AND (site_id = 8)`;
         await pool.query(sql, [bursaGbBuyPrices, bursaGbSellPrices, bursaGbName])
     }
 
@@ -206,27 +240,34 @@ app.get('/test', async (req, res) => {
     const oyunForNameCek = await oyunForContainer.$$('h3.productText');
     const oyunForSv = await oyunForContainer.$$('.productText2');
     for (let i = 0; i < oyunForSell.length; i++) {
-        const gbGetir = await page.evaluate(oyunForSv => oyunForSv.textContent.split(" ")[3].replace("M",""), oyunForSv[i]);
+        const gbGetir = await page.evaluate(oyunForSv => oyunForSv.textContent.split(" ")[3].replace("M", ""), oyunForSv[i]);
         const oyunForBuyPrices = parseFloat(await page.evaluate(oyunForBuy => oyunForBuy.textContent.split(" ")[2], oyunForBuy[i])) * parseFloat(gbGetir);
-        const oyunForSellPrices = parseFloat(await page.evaluate(oyunForSell => oyunForSell.textContent.replace(" TL",""), oyunForSell[i])) * parseFloat(gbGetir);
-        const oyunForName = await page.evaluate( oyunForNameCek => oyunForNameCek.textContent.split(" ")[2].toUpperCase(), oyunForNameCek[i])
+        const oyunForSellPrices = parseFloat(await page.evaluate(oyunForSell => oyunForSell.textContent.replace(" TL", ""), oyunForSell[i])) * parseFloat(gbGetir);
+        const oyunForName = await page.evaluate(oyunForNameCek => oyunForNameCek.textContent.split(" ")[2].toUpperCase(), oyunForNameCek[i])
 
-        const sql = `UPDATE prices SET buy_price = $1, sell_price = $2 WHERE server_id = (SELECT server_id FROM servers WHERE name = $3) AND (site_id= 9)`;
+        const sql = `UPDATE prices
+                     SET buy_price  = $1,
+                         sell_price = $2
+                     WHERE server_id = (SELECT server_id FROM servers WHERE name = $3)
+                       AND (site_id = 9)`;
         await pool.query(sql, [oyunForBuyPrices, oyunForSellPrices, oyunForName])
     }
 
     // OYUNFOR VERİ (BİTİŞ)
-
+}
+catch (error){
+    console.log(error)
+}
     await browser.close();
 });
 
 
-//const cronJob = cron.job("0 */3 * * * *", function() {
-//   request('http://localhost:3000/test', function (error, response, body) {
-//        console.log('Cron job is running');
-//    });
-//});
-//cronJob.start();
+const cronJob = cron.job("0 */3 * * * *", function() {
+   request('http://localhost:3000/test', function (error, response, body) {
+        console.log('Cron job is running');
+    });
+});
+cronJob.start();
 
 
 
@@ -255,25 +296,10 @@ pool.connect(function(err){
 // Prices verilerinin update edildiği bölüm (başlangıç)
 io.on("connection", async (socket) => {
 
-    //GameSatış'a ait fiyatlar çekilip, anasayfaya gönderiliyor.
-    const resGms = await pool.query("SELECT * FROM prices WHERE site_id = 1 ORDER BY server_id ASC");
-    socket.emit("GameSatisData", resGms.rows);
-
     //Sunucu isimleri çekiliyor.
     const sunucuID = await pool.query("SELECT prices.server_id, servers.name FROM prices JOIN servers ON prices.server_id = servers.server_id WHERE site_id = 1 ORDER BY servers.server_id ASC ;")
     socket.emit("serverNames", sunucuID.rows);
 
-    const resKg = await pool.query("SELECT * FROM prices WHERE site_id = 2 ORDER BY server_id ASC");
-    socket.emit("KlasGameData", resKg.rows);
-
-    const resOe = await pool.query("SELECT * FROM prices WHERE site_id = 3 ORDER BY server_id ASC");
-    socket.emit("oyunEksData", resOe.rows);
-
-    const resVg = await pool.query("SELECT * FROM prices WHERE site_id = 4 ORDER BY server_id ASC");
-    socket.emit("vatanGameData", resVg.rows);
-
-    const resBg = await pool.query("SELECT * FROM prices WHERE site_id = 5 ORDER BY server_id ASC");
-    socket.emit("bynoGameData", resBg.rows);
 
     socket.on("koPazarPrices", async (data) => {
         for (let i = 0; i < data.length; i++) {
@@ -286,6 +312,8 @@ io.on("connection", async (socket) => {
             }
         }
     });
+
+
 
     const resKp = await pool.query("SELECT * FROM prices WHERE site_id = 6 ORDER BY server_id ASC");
     socket.emit("koPazarData", resKp.rows);
@@ -303,10 +331,6 @@ io.on("connection", async (socket) => {
         }
         });
 
-    const resKso = await pool.query("SELECT * FROM prices WHERE site_id = 7 ORDER BY server_id ASC");
-    socket.emit("kabasakalData", resKso.rows);
-
-
         socket.on("bursaGbPrices", async (data) => {
             for (let i = 0; i < data.length; i++) {
                 const queryText = `UPDATE prices SET buy_price = $1, sell_price =$2 WHERE server_id= (SELECT server_id FROM servers WHERE name = $3) AND (site_id= 8)`;
@@ -319,9 +343,6 @@ io.on("connection", async (socket) => {
                 }
             }
         });
-    const resBursa = await pool.query("SELECT * FROM prices WHERE site_id = 8 ORDER BY server_id ASC");
-    socket.emit("BursaGbData", resBursa.rows);
-
 
     socket.on("oyunForPrices", async (data) => {
         for (let i = 0; i < data.length; i++) {
@@ -336,8 +357,9 @@ io.on("connection", async (socket) => {
         }
     });
 
-    const resOf = await pool.query("SELECT * FROM prices WHERE site_id = 9 ORDER BY server_id ASC");
-    socket.emit("oyunForData", resOf.rows);
+    const res = await pool.query("SELECT * FROM prices WHERE site_id IN (1,2,3,4,5,6,7,8,9) ORDER BY site_id, server_id ASC");
+    const maxZero = await pool.query("SELECT MAX(buy_price) AS max_buy_price FROM prices WHERE server_id = 1")
+    socket.emit("allData", res.rows, maxZero.rows);
 
 });
 
