@@ -133,9 +133,7 @@
 </table>
 
 
-<script>
 
-</script>
 
 
 <script>
@@ -167,16 +165,16 @@
         4: "https://www.vatangame.com/public/vatangame-ikinci-yil.png",
         5: "https://cdn.bynogame.com/UX-new/bynogame-footer-logo/png/bynogame-footer-logo.png",
         6: "https://www.kopazar.com/images/kopazar-logo-white.png",
-        7: "https://www.kabasakalonline.com/theme/default/assets/img/logo.png?v=0.1",
         8: "https://www.bursagb.com/new/img/fixed-logo.webp",
         9: "https://cdn-eu.oyunfor.com/Public/standart/web/dist/img/logo.png?v1",
 // ...
     };
     let dataID1 = [];
 
+
+
     socket.on("allData", veriler => {
         veriler.forEach(veri => {
-            console.log(veriler)
             if (veri.server_id === 1) {
                     $("#a1").append(`<tr style="height: 60px; vertical-align: middle;"><td><img src="${siteIsimleri[veri.site_id]}" width="110px"></td><td class="zeroSell">${veri.sell_price}</td><td class="zeroBuy">${veri.buy_price}</td></tr>`);
             } else if (veri.server_id === 2) {

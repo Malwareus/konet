@@ -66,16 +66,26 @@ try {
     const klasNameCek = await klasContainer.$$('.product-title[data-type="object-name"]');
     for (let i = 0; i < klasNameCek.length; i++) {
         const priceDuzelt = await page.evaluate(klasNameCek => klasNameCek.textContent.split(" ").pop().replace("M", ""), klasNameCek[i]);
-        const klasBuyPrices = parseFloat(await page.evaluate(klasBuy => klasBuy.textContent.match(/\d+(\.\d+)?/g).join('.'), klasBuy[i])) * parseFloat(priceDuzelt);
-        const klasSellPrices = parseFloat(await page.evaluate(klasSell => klasSell.textContent.match(/\d+(\.\d+)?/g).join('.'), klasSell[i])) * parseFloat(priceDuzelt);
+        const klasBuyPrices = Number(await page.evaluate(klasBuy => klasBuy.textContent.match(/\d+(\.\d+)?/g).join('.'), klasBuy[i]));
+        const klasSellPrices = Number(await page.evaluate(klasSell => klasSell.textContent.match(/\d+(\.\d+)?/g).join('.'), klasSell[i]));
         const klasName = await page.evaluate(klasNameCek => klasNameCek.textContent.split(" ")[0].replace('\n', '').toUpperCase(), klasNameCek[i])
-        console.log(klasBuyPrices, klasSellPrices)
+        let adjustedBuyPrice = klasBuyPrices;
+        let adjustedSellPrice = klasSellPrices;
+        if (priceDuzelt === '1') {
+            adjustedBuyPrice *= 100;
+            adjustedSellPrice *= 100;
+        } else if (priceDuzelt === '10') {
+            adjustedBuyPrice *= 10;
+            adjustedSellPrice *= 10;
+        }
+        const roundedNumSell = Math.round(adjustedBuyPrice * 100) / 100;
+        const roundedNumBuy = Math.round(adjustedSellPrice * 100) / 100;
         const sql = `UPDATE prices
                      SET buy_price  = $1,
                          sell_price = $2
                      WHERE server_id = (SELECT server_id FROM servers WHERE name = $3)
                        AND (site_id = 2)`;
-        await pool.query(sql, [klasBuyPrices, klasSellPrices, klasName])
+        await pool.query(sql, [roundedNumBuy, roundedNumSell, klasName])
     }
     // KLASGAME VERİ (BİTİŞ)
 
@@ -90,16 +100,29 @@ try {
     const oyunEksNameCek = await oyunEksContainer.$$('.item-col-center h5');
     const oyunEksNameFind = await oyunEksContainer.$$('.heading-secondary');
     for (let i = 0; i < oyunEksBuy.length; i++) {
-        const priceDuzelt = await page.evaluate(oyunEksNameFind => oyunEksNameFind.textContent.split(" ").pop().replace("m", " "), oyunEksNameFind[i]);
-        const oyunEksBuyPrices = parseFloat(await page.evaluate(oyunEksBuy => oyunEksBuy.textContent.replace(/\n/g, "").replace(/[^0-9,]/g, "").replace(',', '.'), oyunEksBuy[i])) * parseFloat(priceDuzelt);
-        const oyunEksSellPrices = parseFloat(await page.evaluate(oyunEksSell => oyunEksSell.textContent.replace(/\n/g, "").replace(/[^0-9,]/g, "").replace(',', '.'), oyunEksSell[i])) * parseFloat(priceDuzelt);
+        const priceDuzelt = await page.evaluate(oyunEksNameFind => oyunEksNameFind.textContent.split(" ").pop().replace("m", ""), oyunEksNameFind[i]);
+        const oyunEksBuyPrices = Number(await page.evaluate(oyunEksBuy => oyunEksBuy.textContent.replace(/\n/g, "").replace(/[^0-9,]/g, "").replace(',', '.'), oyunEksBuy[i]));
+        const oyunEksSellPrices = Number(await page.evaluate(oyunEksSell => oyunEksSell.textContent.replace(/\n/g, "").replace(/[^0-9,]/g, "").replace(',', '.'), oyunEksSell[i]));
         const oyunEksName = await page.evaluate(oyunEksNameCek => oyunEksNameCek.textContent.split(" ")[2].toUpperCase(), oyunEksNameCek[i])
+        let adjustedBuyPrice = oyunEksBuyPrices;
+        let adjustedSellPrice = oyunEksSellPrices;
+        if (Number(priceDuzelt) == '1') {
+            adjustedBuyPrice *= 100;
+            adjustedSellPrice *= 100;
+        } else if (Number(priceDuzelt) == '10') {
+            adjustedBuyPrice *= 10;
+            adjustedSellPrice *= 10;
+        } else if (Number(priceDuzelt) == '100') {
+            adjustedBuyPrice *= 1;
+            adjustedSellPrice *= 1;
+        }
         const sql = `UPDATE prices
                      SET buy_price  = $1,
                          sell_price = $2
                      WHERE server_id = (SELECT server_id FROM servers WHERE name = $3)
                        AND (site_id = 3)`;
-        await pool.query(sql, [oyunEksBuyPrices, oyunEksSellPrices, oyunEksName])
+        await pool.query(sql, [adjustedBuyPrice, adjustedSellPrice, oyunEksName])
+        console.log(adjustedBuyPrice,adjustedSellPrice,priceDuzelt)
     }
 
     // OYUNEKS VERİ (BİTİŞ)
@@ -114,21 +137,30 @@ try {
     const vatanGameSell = await vatanGameContainer.$$('.gm-product-price.mt-4.mt-lg-0.align-self-center.w-50');
     const vatanGameNameCek = await vatanGameContainer.$$('.gm-product-caption');
     for (let i = 0; i < vatanGameBuy.length; i++) {
-        const priceDuzelt = await page.evaluate(vatanGameNameCek => vatanGameNameCek.textContent.split(" ")[3], vatanGameNameCek[i])
-        const vatanGameBuyPrices = parseFloat(await page.evaluate(vatanGameBuy => vatanGameBuy.innerHTML.match(/<b>(.*?)<\/b>/)[1].replace(" TL", ""), vatanGameBuy[i])) * parseFloat(priceDuzelt);
-        const vatanGameSellPrices = parseFloat(await page.evaluate(vatanGameSell => vatanGameSell.innerHTML.replace(" TL", ""), vatanGameSell[i])) * parseFloat(priceDuzelt);
-        const vatanGameName = await page.evaluate(vatanGameNameCek => vatanGameNameCek.textContent.split(" ")[2].toUpperCase().replace(/İ/g, "I").replace("MINARK","MİNARK"), vatanGameNameCek[i])
+        const priceDuzelt = await page.evaluate(vatanGameNameCek => vatanGameNameCek.textContent.split(" ")[3].toUpperCase(), vatanGameNameCek[i])
+        const vatanGameBuyPrices = Number(await page.evaluate(vatanGameBuy => vatanGameBuy.innerHTML.match(/<b>(.*?)<\/b>/)[1].replace(" TL", ""), vatanGameBuy[i]));
+        const vatanGameSellPrices = Number(await page.evaluate(vatanGameSell => vatanGameSell.innerHTML.replace(" TL", ""), vatanGameSell[i]));
+        const vatanGameName = await page.evaluate(vatanGameNameCek => vatanGameNameCek.textContent.split(" ")[2].toUpperCase().replace(/İ/g, "I"), vatanGameNameCek[i])
+        let adjustedBuyPrice = vatanGameBuyPrices;
+        let adjustedSellPrice = vatanGameSellPrices;
+        if (priceDuzelt === '1') {
+            adjustedBuyPrice *= 100;
+            adjustedSellPrice *= 100;
+        } else if (priceDuzelt === '10') {
+            adjustedBuyPrice *= 10;
+            adjustedSellPrice *= 10;
+        }
+        const roundedNumSell = Math.round(adjustedBuyPrice * 100) / 100;
+        const roundedNumBuy = Math.round(adjustedSellPrice * 100) / 100;
         const sql = `UPDATE prices
                      SET buy_price  = $1,
                          sell_price = $2
                      WHERE server_id = (SELECT server_id FROM servers WHERE name = $3)
                        AND (site_id = 4)`;
-        await pool.query(sql, [vatanGameBuyPrices, vatanGameSellPrices, vatanGameName])
-        console.log(vatanGameBuyPrices, vatanGameSellPrices, vatanGameName)
+        await pool.query(sql, [roundedNumBuy, roundedNumSell, vatanGameName])
+
     }
-    } catch (error) {
-        console.error(error);
-    }
+    } catch (error) {}
 
     // VATANGAME VERİ (BİTİŞ)
 
@@ -142,8 +174,8 @@ try {
     const bynoGameBuy = await bynoGameContainer.$$("form[action='/tr/satis-onay'] button[type='submit']");
     const bynoGameNameCek = await bynoGameContainer.$$('h2.font-weight-bolder.text-left');
     for (let i = 0; i < bynoGameBuy.length; i++) {
-        const bynoGameBuyPrices = await page.evaluate(bynoGameBuy => bynoGameBuy.innerText.split(" ")[0].replace(",", "."), bynoGameBuy[i]);
-        const bynoGameSellPrices = await page.evaluate(bynoGameSell => bynoGameSell.textContent.split(" ")[0].replace(",", ".").replace("TRYTL", ""), bynoGameSell[i]);
+        const bynoGameBuyPrices = parseFloat(await page.evaluate(bynoGameBuy => bynoGameBuy.innerText.split(" ")[0].replace(",", "."), bynoGameBuy[i]));
+        const bynoGameSellPrices = parseFloat(await page.evaluate(bynoGameSell => bynoGameSell.textContent.split(" ")[0].replace(",", ".").replace("TRYTL", ""), bynoGameSell[i]));
         const bynoGameName = await page.evaluate(bynoGameNameCek => bynoGameNameCek.innerText.split(" ")[2].toUpperCase(), bynoGameNameCek[i])
         const sql = `UPDATE prices
                      SET buy_price  = $1,
@@ -183,7 +215,7 @@ try {
 
     // KABASAKALONLINE VERİ (BAŞLANGIÇ)
 
-    await page.goto('https://www.kabasakalonline.com/knight-online/knight-online-goldbar');
+   /** await page.goto('https://www.kabasakalonline.com/knight-online/knight-online-goldbar');
     const kabasakalOnline = await page.waitForSelector('.product-list-a1');
     const kabasakalOnlineSell = await kabasakalOnline.$$('.sellto.waves-effect.waves-light');
     const kabasakalOnlineBuy = await kabasakalOnline.$$("span[data-type=\"price\"]");
@@ -202,7 +234,7 @@ try {
         await pool.query(sql, [ksoBuyPrices, ksoSellPrices, ksoName])
     }
 
-    // KABASAKALONLINE VERİ (BİTİŞ)
+    // KABASAKALONLINE VERİ (BİTİŞ) **/
 
     // ----- //
 
@@ -218,13 +250,15 @@ try {
         const bursaGbBuyPrices = parseFloat((await page.evaluate(bursaGbBuy => bursaGbBuy.textContent.split(" (")[1].split(")")[0], bursaGbBuy[i])) * parseFloat(priceDuzelt)).toFixed(2);
         const bursaGbSellPrices = parseFloat(await page.evaluate(bursaGbSell => bursaGbSell.textContent.replace(" TL", "").replace(",", "."), bursaGbSell[i])) * parseFloat(priceDuzelt).toFixed(2);
         const bursaGbName = await page.evaluate(bursaGbNameCek => bursaGbNameCek.innerHTML.split(" ")[0].toUpperCase(), bursaGbNameCek[i])
+        const roundedNumSell = Math.round(bursaGbSellPrices * 100) / 100;
+        const roundedNumBuy = Math.round(bursaGbBuyPrices * 100) / 100;
 
         const sql = `UPDATE prices
                      SET buy_price  = $1,
                          sell_price = $2
                      WHERE server_id = (SELECT server_id FROM servers WHERE name = $3)
                        AND (site_id = 8)`;
-        await pool.query(sql, [bursaGbBuyPrices, bursaGbSellPrices, bursaGbName])
+        await pool.query(sql, [roundedNumBuy, roundedNumSell, bursaGbName])
     }
 
     // BURSAGB VERİ (BİTİŞ)
@@ -244,13 +278,15 @@ try {
         const oyunForBuyPrices = parseFloat(await page.evaluate(oyunForBuy => oyunForBuy.textContent.split(" ")[2], oyunForBuy[i])) * parseFloat(gbGetir);
         const oyunForSellPrices = parseFloat(await page.evaluate(oyunForSell => oyunForSell.textContent.replace(" TL", ""), oyunForSell[i])) * parseFloat(gbGetir);
         const oyunForName = await page.evaluate(oyunForNameCek => oyunForNameCek.textContent.split(" ")[2].toUpperCase(), oyunForNameCek[i])
+        const roundedNumSell = Math.round(oyunForBuyPrices * 100) / 100;
+        const roundedNumBuy = Math.round(oyunForSellPrices * 100) / 100;
 
         const sql = `UPDATE prices
                      SET buy_price  = $1,
                          sell_price = $2
                      WHERE server_id = (SELECT server_id FROM servers WHERE name = $3)
                        AND (site_id = 9)`;
-        await pool.query(sql, [oyunForBuyPrices, oyunForSellPrices, oyunForName])
+        await pool.query(sql, [roundedNumBuy, roundedNumSell, oyunForName])
     }
 
     // OYUNFOR VERİ (BİTİŞ)
@@ -318,19 +354,6 @@ io.on("connection", async (socket) => {
     const resKp = await pool.query("SELECT * FROM prices WHERE site_id = 6 ORDER BY server_id ASC");
     socket.emit("koPazarData", resKp.rows);
 
-        socket.on("kabasakalPrices", async (data) => {
-        for (let i = 0; i < data.length; i++) {
-            const queryText = `UPDATE prices SET buy_price = $1, sell_price =$2 WHERE server_id= (SELECT server_id FROM servers WHERE name = $3) AND (site_id= 7)`;
-            const values = [data[i].kabasakalOnlineBuy, data[i].kabasakalOnlineSell, data[i].kabasakalName];
-            try {
-                const res = await pool.query(queryText, values);
-
-            } catch (err) {
-                console.log(err.stack);
-            }
-        }
-        });
-
         socket.on("bursaGbPrices", async (data) => {
             for (let i = 0; i < data.length; i++) {
                 const queryText = `UPDATE prices SET buy_price = $1, sell_price =$2 WHERE server_id= (SELECT server_id FROM servers WHERE name = $3) AND (site_id= 8)`;
@@ -357,9 +380,8 @@ io.on("connection", async (socket) => {
         }
     });
 
-    const res = await pool.query("SELECT * FROM prices WHERE site_id IN (1,2,3,4,5,6,7,8,9) ORDER BY site_id, server_id ASC");
-    const maxZero = await pool.query("SELECT MAX(buy_price) AS max_buy_price FROM prices WHERE server_id = 1")
-    socket.emit("allData", res.rows, maxZero.rows);
+    const res = await pool.query("SELECT * FROM prices WHERE site_id IN (1,2,3,4,5,6,8,9) ORDER BY site_id, server_id ASC");
+    socket.emit("allData", res.rows);
 
 });
 
