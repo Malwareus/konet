@@ -299,7 +299,7 @@ catch (error){
 
 
 const cronJob = cron.job("0 */3 * * * *", function() {
-   request('http://localhost:3000/test', function (error, response, body) {
+   request('https://kogms.azurewebsites.net:443/test', function (error, response, body) {
         console.log('Cron job is running');
     });
 });
@@ -387,4 +387,4 @@ io.on("connection", async (socket) => {
 
 
 
-server.listen(3000)
+server.listen(443)
